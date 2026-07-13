@@ -134,7 +134,10 @@ class Tariff(TimestampMixin, db.Model):
     origin: Mapped[str] = mapped_column(String(160), index=True, nullable=False)
     destination: Mapped[str] = mapped_column(String(160), index=True, nullable=False)
     service_type: Mapped[ServiceType] = mapped_column(Enum(ServiceType, native_enum=False), nullable=False, index=True)
+    distance_km: Mapped[int] = mapped_column(nullable=True)
     price_per_kg: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
+    price_per_m3: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=True)
+    full_truck_price: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=True)
     minimum_price: Mapped[Decimal] = mapped_column(Numeric(14, 2), default=5000, nullable=False)
     volumetric_factor: Mapped[Decimal] = mapped_column(Numeric(10, 2), default=167, nullable=False)
     rounding_step: Mapped[Decimal] = mapped_column(Numeric(10, 2), default=500, nullable=False)
@@ -142,7 +145,40 @@ class Tariff(TimestampMixin, db.Model):
     delivery_days_max: Mapped[int] = mapped_column(default=5, nullable=False)
     valid_from: Mapped[date] = mapped_column(Date, default=date.today, nullable=False)
     valid_until: Mapped[date] = mapped_column(Date, nullable=True)
+    vat_included: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    notes: Mapped[str] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
+
+
+class CityTariff(TimestampMixin, db.Model):
+    __tablename__ = "city_tariffs"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    service_name: Mapped[str] = mapped_column(String(200), unique=True, nullable=False)
+    specifications: Mapped[str] = mapped_column(String(300), nullable=True)
+    unit: Mapped[str] = mapped_column(String(80), default="час", nullable=False)
+    minimum_units: Mapped[int] = mapped_column(default=1, nullable=False)
+    price: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False)
+    vat_included: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    notes: Mapped[str] = mapped_column(Text, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, index=True)
+
+
+class CompanySetting(TimestampMixin, db.Model):
+    __tablename__ = "company_settings"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    legal_name: Mapped[str] = mapped_column(String(250), nullable=False)
+    brand_name: Mapped[str] = mapped_column(String(120), default="icstroy", nullable=False)
+    bin: Mapped[str] = mapped_column(String(20), nullable=False)
+    address: Mapped[str] = mapped_column(String(350), nullable=False)
+    phone: Mapped[str] = mapped_column(String(50), nullable=False)
+    website: Mapped[str] = mapped_column(String(250), nullable=False)
+    director_name: Mapped[str] = mapped_column(String(200), nullable=True)
+    experience_years: Mapped[int] = mapped_column(default=25, nullable=False)
+    proposal_title: Mapped[str] = mapped_column(String(250), default="Международные грузоперевозки", nullable=False)
+    proposal_intro: Mapped[str] = mapped_column(Text, nullable=False)
+    vat_note: Mapped[str] = mapped_column(String(120), default="Все цены указаны без НДС", nullable=False)
 
 
 class Shipment(TimestampMixin, db.Model):

@@ -15,6 +15,7 @@ class PriceQuote:
     days_min: int
     days_max: int
     tariff: Tariff
+    basis: str
 
 
 def as_decimal(value, default="0"):
@@ -47,7 +48,20 @@ def calculate_quote(origin, destination, service_type, weight_kg, volume_m3):
     weight = max(Decimal("0"), as_decimal(weight_kg))
     volume = max(Decimal("0"), as_decimal(volume_m3))
     chargeable_weight = max(weight, volume * tariff.volumetric_factor)
-    raw_total = chargeable_weight * tariff.price_per_kg
+    if service_type == ServiceType.AUTO and tariff.full_truck_price:
+        raw_total = tariff.full_truck_price
+        basis = "Крытая фура, 20 тонн"
+    else:
+        charges = []
+        if tariff.price_per_m3 and tariff.price_per_m3 > 0:
+            if tariff.price_per_kg and tariff.price_per_kg > 0:
+                charges.append((weight * tariff.price_per_kg, "По весу"))
+            charges.append((volume * tariff.price_per_m3, "По объёму"))
+        elif tariff.price_per_kg and tariff.price_per_kg > 0:
+            charges.append((chargeable_weight * tariff.price_per_kg, "По расчётному весу"))
+        if not charges:
+            return None
+        raw_total, basis = max(charges, key=lambda item: item[0])
     step = max(Decimal("1"), tariff.rounding_step)
     rounded_total = (raw_total / step).quantize(Decimal("1"), rounding=ROUND_HALF_UP) * step
     total = max(tariff.minimum_price, rounded_total)
@@ -58,5 +72,5 @@ def calculate_quote(origin, destination, service_type, weight_kg, volume_m3):
         days_min=tariff.delivery_days_min,
         days_max=tariff.delivery_days_max,
         tariff=tariff,
+        basis=basis,
     )
-

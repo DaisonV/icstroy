@@ -6,7 +6,7 @@ from sqlalchemy import select, text
 
 from . import bp
 from ..extensions import db
-from ..models import Application, SeoSetting, ServiceType, Shipment, ShipmentStatus
+from ..models import Application, CompanySetting, SeoSetting, ServiceType, Shipment, ShipmentStatus, Tariff
 from ..services.pricing import calculate_quote
 
 
@@ -30,14 +30,18 @@ def page_seo(page_key, defaults):
 @bp.get("/")
 def index():
     seo = page_seo("home", {
-        "title": "icstroy — перевозки по Казахстану, СНГ и авиадоставка из Европы",
-        "description": "Сборные грузы, перевозки по Казахстану и СНГ, авиадоставка из Европы. 20+ лет в логистике.",
-        "keywords": "грузоперевозки Казахстан, сборные грузы, авиадоставка Европа Казахстан, логистика Алматы",
+        "title": "IC STROY GROUP — международные грузоперевозки",
+        "description": "25 лет в логистике. Авиадоставка из Европы, доставка из России и перевозки собственным транспортом по Казахстану.",
+        "keywords": "международные грузоперевозки, грузоперевозки Казахстан, доставка из России, авиадоставка Европа, логистика Алматы",
         "canonical_url": current_app.config["SITE_URL"] + "/",
         "og_image": current_app.config["SITE_URL"] + url_for("static", filename="assets/icstroy-mark.svg"),
         "robots": "index,follow",
     })
-    return render_template("public/index.html", seo=seo)
+    company = db.session.scalar(select(CompanySetting).limit(1))
+    destinations = db.session.scalars(
+        select(Tariff.destination).where(Tariff.is_active.is_(True), Tariff.origin == "Алматы").distinct().order_by(Tariff.destination)
+    ).all()
+    return render_template("public/index.html", seo=seo, company=company, destinations=destinations)
 
 
 @bp.get("/brandbook")
@@ -47,7 +51,8 @@ def brandbook():
 
 @bp.get("/privacy")
 def privacy():
-    return render_template("public/privacy.html")
+    company = db.session.scalar(select(CompanySetting).limit(1))
+    return render_template("public/privacy.html", company=company)
 
 
 @bp.get("/health")
@@ -107,6 +112,8 @@ def calculate():
         "days_min": quote.days_min,
         "days_max": quote.days_max,
         "tariff": quote.tariff.name,
+        "basis": quote.basis,
+        "vat_included": quote.tariff.vat_included,
     })
 
 

@@ -51,6 +51,8 @@ class IcstroyAppTest(unittest.TestCase):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Касымова Гаухар Булатовна".encode(), response.data)
+        self.assertIn(b"251140024698", response.data)
+        self.assertIn("Рыскулова 140/4".encode(), response.data)
         self.assertIn(b"application/ld+json", response.data)
         self.assertIn(b"/sitemap.xml", self.client.get("/robots.txt").data)
         self.assertIn(b"/privacy", self.client.get("/sitemap.xml").data)
@@ -58,11 +60,12 @@ class IcstroyAppTest(unittest.TestCase):
 
     def test_calculator_uses_database_tariff(self):
         response = self.client.post("/api/calculate", json={
-            "from": "Алматы", "to": "Астана", "transport": "groupage",
+            "from": "Алматы", "to": "Астана", "transport": "auto",
             "weight": 100, "volume": 0.5,
         })
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.get_json()["price"], 9500)
+        self.assertEqual(response.get_json()["price"], 650000)
+        self.assertEqual(response.get_json()["basis"], "Крытая фура, 20 тонн")
 
     def test_website_application_is_saved(self):
         before = db.session.scalar(select(func.count(Application.id)))
@@ -86,17 +89,22 @@ class IcstroyAppTest(unittest.TestCase):
         self.assertEqual(logged_in.status_code, 200)
         self.assertIn("Система работает".encode(), logged_in.data)
         self.assertEqual(self.client.get("/crm/shipments").status_code, 200)
+        self.assertEqual(self.client.get("/crm/commercial-proposal").status_code, 200)
+        self.assertIn(b"251140024698", self.client.get("/crm/commercial-proposal").data)
+        self.assertEqual(self.client.get("/crm/city-tariffs").status_code, 200)
 
     def test_admin_can_change_tariff(self):
         self.login()
-        tariff = db.session.scalar(select(Tariff).where(Tariff.name == "Алматы — Астана · Сборный"))
+        tariff = db.session.scalar(select(Tariff).where(Tariff.name == "Алматы — Караганда · Сборный груз"))
         response = self.client.post("/crm/tariffs/{}".format(tariff.id), data={
             "name": tariff.name,
             "origin": "Алматы",
-            "destination": "Астана",
+            "destination": "Караганда",
             "service_type": "groupage",
-            "price_per_kg": "100",
-            "minimum_price": "5000",
+            "distance_km": "1100",
+            "price_per_kg": "130",
+            "price_per_m3": "6000",
+            "minimum_price": "0",
             "volumetric_factor": "167",
             "rounding_step": "500",
             "delivery_days_min": "3",
@@ -105,11 +113,11 @@ class IcstroyAppTest(unittest.TestCase):
         }, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         quote = self.client.post("/api/calculate", json={
-            "from": "Алматы", "to": "Астана", "transport": "groupage",
+            "from": "Алматы", "to": "Караганда", "transport": "groupage",
             "weight": 100, "volume": 0.5,
         }).get_json()
-        self.assertEqual(quote["price"], 10000)
-        tariff.price_per_kg = 95
+        self.assertEqual(quote["price"], 13000)
+        tariff.price_per_kg = 120
         db.session.commit()
 
 

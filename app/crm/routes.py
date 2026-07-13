@@ -9,8 +9,8 @@ from sqlalchemy.orm import selectinload
 from . import bp
 from ..extensions import db
 from ..models import (
-    Application, ApplicationStatus, Client, Role, SeoSetting, ServiceType,
-    Shipment, ShipmentStatus, Tariff, TrackingEvent, User,
+    Application, ApplicationStatus, CityTariff, Client, CompanySetting, Role,
+    SeoSetting, ServiceType, Shipment, ShipmentStatus, Tariff, TrackingEvent, User,
 )
 from ..permissions import roles_required
 from ..services.audit import record_action
@@ -240,16 +240,21 @@ def tariffs():
             origin=request.form.get("origin", "").strip(),
             destination=request.form.get("destination", "").strip(),
             service_type=ServiceType(request.form.get("service_type")),
+            distance_km=int(request.form["distance_km"]) if request.form.get("distance_km") else None,
             price_per_kg=decimal_or_none(request.form.get("price_per_kg")) or Decimal("0"),
-            minimum_price=decimal_or_none(request.form.get("minimum_price")) or Decimal("5000"),
+            price_per_m3=decimal_or_none(request.form.get("price_per_m3")),
+            full_truck_price=decimal_or_none(request.form.get("full_truck_price")),
+            minimum_price=decimal_or_none(request.form.get("minimum_price")) or Decimal("0"),
             volumetric_factor=decimal_or_none(request.form.get("volumetric_factor")) or Decimal("167"),
             rounding_step=decimal_or_none(request.form.get("rounding_step")) or Decimal("500"),
             delivery_days_min=int(request.form.get("delivery_days_min", 1)),
             delivery_days_max=int(request.form.get("delivery_days_max", 3)),
             valid_from=date.fromisoformat(request.form.get("valid_from") or date.today().isoformat()),
+            vat_included=bool(request.form.get("vat_included")),
+            notes=request.form.get("notes", "").strip() or None,
         )
-        if not tariff.name or not tariff.origin or not tariff.destination or tariff.price_per_kg <= 0:
-            flash("Заполните маршрут и положительную ставку.", "error")
+        if not tariff.name or not tariff.origin or not tariff.destination or not any((tariff.price_per_kg, tariff.price_per_m3, tariff.full_truck_price)):
+            flash("Заполните маршрут и хотя бы одну ставку.", "error")
         else:
             db.session.add(tariff)
             db.session.flush()
@@ -281,7 +286,10 @@ def tariff_detail(tariff_id):
         tariff.origin = request.form.get("origin", "").strip()
         tariff.destination = request.form.get("destination", "").strip()
         tariff.service_type = ServiceType(request.form.get("service_type"))
+        tariff.distance_km = int(request.form["distance_km"]) if request.form.get("distance_km") else None
         tariff.price_per_kg = decimal_or_none(request.form.get("price_per_kg")) or Decimal("0")
+        tariff.price_per_m3 = decimal_or_none(request.form.get("price_per_m3"))
+        tariff.full_truck_price = decimal_or_none(request.form.get("full_truck_price"))
         tariff.minimum_price = decimal_or_none(request.form.get("minimum_price")) or Decimal("0")
         tariff.volumetric_factor = decimal_or_none(request.form.get("volumetric_factor")) or Decimal("167")
         tariff.rounding_step = decimal_or_none(request.form.get("rounding_step")) or Decimal("1")
@@ -289,8 +297,10 @@ def tariff_detail(tariff_id):
         tariff.delivery_days_max = int(request.form.get("delivery_days_max", 1))
         tariff.valid_from = date.fromisoformat(request.form.get("valid_from") or date.today().isoformat())
         tariff.valid_until = date.fromisoformat(request.form["valid_until"]) if request.form.get("valid_until") else None
-        if not tariff.name or not tariff.origin or not tariff.destination or tariff.price_per_kg <= 0:
-            flash("Заполните маршрут и положительную ставку.", "error")
+        tariff.vat_included = bool(request.form.get("vat_included"))
+        tariff.notes = request.form.get("notes", "").strip() or None
+        if not tariff.name or not tariff.origin or not tariff.destination or not any((tariff.price_per_kg, tariff.price_per_m3, tariff.full_truck_price)):
+            flash("Заполните маршрут и хотя бы одну ставку.", "error")
         elif tariff.delivery_days_min > tariff.delivery_days_max:
             flash("Минимальный срок не может быть больше максимального.", "error")
         else:
@@ -299,6 +309,79 @@ def tariff_detail(tariff_id):
             flash("Тариф обновлён. Новые расчёты уже используют эти значения.", "success")
             return redirect(url_for("crm.tariffs"))
     return render_template("crm/tariff_detail.html", tariff=tariff)
+
+
+@bp.route("/city-tariffs", methods=["GET", "POST"])
+@roles_required(Role.ADMIN)
+def city_tariffs():
+    if request.method == "POST":
+        item_id = request.form.get("item_id")
+        item = db.session.get(CityTariff, int(item_id)) if item_id else CityTariff(service_name="", price=Decimal("0"))
+        item.service_name = request.form.get("service_name", "").strip()
+        item.specifications = request.form.get("specifications", "").strip() or None
+        item.unit = request.form.get("unit", "час").strip() or "час"
+        item.minimum_units = int(request.form.get("minimum_units", 1))
+        item.price = decimal_or_none(request.form.get("price")) or Decimal("0")
+        item.vat_included = bool(request.form.get("vat_included"))
+        item.notes = request.form.get("notes", "").strip() or None
+        item.is_active = bool(request.form.get("is_active", "1"))
+        if not item.service_name or item.price <= 0:
+            flash("Укажите услугу и положительную стоимость.", "error")
+        else:
+            if item.id is None:
+                db.session.add(item)
+            db.session.flush()
+            record_action("update" if item_id else "create", "city_tariff", item.id, item.service_name)
+            db.session.commit()
+            flash("Городской тариф сохранён.", "success")
+            return redirect(url_for("crm.city_tariffs"))
+    items = db.session.scalars(select(CityTariff).order_by(CityTariff.is_active.desc(), CityTariff.service_name)).all()
+    return render_template("crm/city_tariffs.html", tariffs=items)
+
+
+@bp.route("/company", methods=["GET", "POST"])
+@roles_required(Role.ADMIN)
+def company():
+    setting = db.session.scalar(select(CompanySetting).limit(1))
+    if setting is None:
+        abort(404)
+    if request.method == "POST":
+        setting.legal_name = request.form.get("legal_name", "").strip()
+        setting.brand_name = request.form.get("brand_name", "").strip()
+        setting.bin = request.form.get("bin", "").strip()
+        setting.address = request.form.get("address", "").strip()
+        setting.phone = request.form.get("phone", "").strip()
+        setting.website = request.form.get("website", "").strip()
+        setting.director_name = request.form.get("director_name", "").strip() or None
+        setting.experience_years = int(request.form.get("experience_years", 25))
+        setting.proposal_title = request.form.get("proposal_title", "").strip()
+        setting.proposal_intro = request.form.get("proposal_intro", "").strip()
+        setting.vat_note = request.form.get("vat_note", "").strip()
+        record_action("update", "company", setting.id, setting.legal_name)
+        db.session.commit()
+        flash("Реквизиты компании обновлены.", "success")
+        return redirect(url_for("crm.company"))
+    return render_template("crm/company.html", company=setting)
+
+
+@bp.route("/commercial-proposal", methods=["GET", "POST"])
+def commercial_proposal():
+    company = db.session.scalar(select(CompanySetting).limit(1))
+    tariffs_list = db.session.scalars(
+        select(Tariff).where(Tariff.is_active.is_(True), Tariff.service_type == ServiceType.AUTO).order_by(Tariff.destination)
+    ).all()
+    groupage = db.session.scalars(
+        select(Tariff).where(Tariff.is_active.is_(True), Tariff.service_type == ServiceType.GROUPAGE).order_by(Tariff.destination)
+    ).all()
+    city = db.session.scalars(select(CityTariff).where(CityTariff.is_active.is_(True)).order_by(CityTariff.service_name)).all()
+    recipient = request.form.get("recipient", "").strip() if request.method == "POST" else ""
+    contact = request.form.get("contact", "").strip() if request.method == "POST" else ""
+    subject = request.form.get("subject", "Коммерческое предложение по грузоперевозкам").strip() if request.method == "POST" else "Коммерческое предложение по грузоперевозкам"
+    return render_template(
+        "crm/commercial_proposal.html", company=company, tariffs=tariffs_list,
+        groupage=groupage, city_tariffs=city, recipient=recipient, contact=contact,
+        subject=subject, generated=date.today(),
+    )
 
 
 @bp.route("/seo", methods=["GET", "POST"])

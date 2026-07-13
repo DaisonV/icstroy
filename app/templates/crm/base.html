@@ -18,9 +18,11 @@
       <a class="{{ 'active' if 'application' in request.endpoint }}" href="{{ url_for('crm.applications') }}"><i>▤</i>Заявки</a>
       <a class="{{ 'active' if 'shipment' in request.endpoint }}" href="{{ url_for('crm.shipments') }}"><i>↗</i>Перевозки</a>
       <a class="{{ 'active' if 'client' in request.endpoint }}" href="{{ url_for('crm.clients') }}"><i>◎</i>Клиенты</a>
+      <a class="{{ 'active' if request.endpoint == 'crm.commercial_proposal' }}" href="{{ url_for('crm.commercial_proposal') }}"><i>▧</i>Коммерческое предложение</a>
       {% if current_user.role == Role.ADMIN %}
       <small>Управление</small>
-      <a class="{{ 'active' if 'tariff' in request.endpoint }}" href="{{ url_for('crm.tariffs') }}"><i>₸</i>Тарифы</a>
+      <a class="{{ 'active' if request.endpoint in ('crm.tariffs', 'crm.tariff_detail') }}" href="{{ url_for('crm.tariffs') }}"><i>₸</i>Тарифы</a>
+      <a class="{{ 'active' if request.endpoint == 'crm.company' }}" href="{{ url_for('crm.company') }}"><i>◇</i>Реквизиты компании</a>
       <a class="{{ 'active' if request.endpoint == 'crm.seo' }}" href="{{ url_for('crm.seo') }}"><i>⌁</i>SEO сайта</a>
       <a class="{{ 'active' if request.endpoint == 'crm.users' }}" href="{{ url_for('crm.users') }}"><i>♙</i>Сотрудники</a>
       {% endif %}

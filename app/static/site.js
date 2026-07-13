@@ -88,7 +88,8 @@ document.querySelector('#calculatorForm').addEventListener('submit', async (even
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || 'Не удалось выполнить расчёт.');
     priceElement.textContent = `от ${result.price.toLocaleString('ru-RU')} ₸`;
-    timeElement.textContent = `${result.days_min}–${result.days_max} дней`;
+    const vat = result.vat_included ? 'с НДС' : 'без НДС';
+    timeElement.textContent = `${result.days_min}–${result.days_max} дней · ${result.basis} · ${vat}`;
   } catch (error) {
     priceElement.textContent = 'Индивидуальный расчёт';
     timeElement.textContent = error.message;

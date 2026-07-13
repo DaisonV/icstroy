@@ -11,10 +11,12 @@ services:
     runtime: python
     plan: free
     region: frankfurt
+    domains:
+      - icstroy.kz
     buildCommand: pip install -r requirements.txt
     startCommand: flask --app wsgi:app db upgrade && flask --app wsgi:app seed --without-demo && gunicorn --workers 2 --threads 4 --timeout 60 --bind 0.0.0.0:$PORT wsgi:app
     healthCheckPath: /health
-    autoDeploy: true
+    autoDeployTrigger: commit
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -25,7 +27,7 @@ services:
       - key: FLASK_ENV
         value: production
       - key: SITE_URL
-        sync: false
+        value: https://icstroy.kz
       - key: ADMIN_EMAIL
         value: admin@icstroy.kz
       - key: ADMIN_PASSWORD

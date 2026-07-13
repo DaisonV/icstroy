@@ -21,7 +21,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   <script src="{{ url_for('static', filename='site.js') }}" defer></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"icstroy","url":"{{ config.SITE_URL }}","logo":"{{ config.SITE_URL }}{{ url_for('static', filename='assets/icstroy-mark.svg') }}","telephone":"+77770087777","address":{"@type":"PostalAddress","streetAddress":"Толе би 291, офис 24","addressLocality":"Алматы","addressCountry":"KZ"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"{{ company.legal_name if company else 'ТОО IC STROY GROUP' }}","url":"{{ company.website if company else config.SITE_URL }}","logo":"{{ config.SITE_URL }}{{ url_for('static', filename='assets/icstroy-mark.svg') }}","telephone":"+77770087777","taxID":"{{ company.bin if company else '251140024698' }}","address":{"@type":"PostalAddress","streetAddress":"пр. Рыскулова 140/4, кабинет 416","addressLocality":"Алматы","addressCountry":"KZ"}}</script>
 </head>
 <body class="site-body">
   <a class="skip-link" href="#main">Перейти к содержанию</a>
@@ -71,7 +71,7 @@
         <div class="hero-copy reveal">
           <div class="eyebrow"><span></span>Логистика без неопределённости</div>
           <h1>Доставляем груз.<br><em>Вы контролируете путь.</em></h1>
-          <p class="hero-lead">Сборные грузы, перевозки по Казахстану и СНГ, а также авиадоставка из Европы — с понятными сроками и персональным менеджером.</p>
+          <p class="hero-lead">Авиадоставка из Европы, доставка из России и перевозки собственным транспортом по Казахстану — надёжно, оперативно и в срок.</p>
           <div class="hero-actions">
             <a class="button button-primary" href="#calculator">Рассчитать доставку <span>↗</span></a>
             <button class="button button-ghost" type="button" data-open-tracking>Отследить груз</button>
@@ -110,7 +110,7 @@
       </div>
 
       <div class="container metrics reveal" data-delay="180">
-        <div><strong>20+</strong><span>лет в логистике</span></div>
+        <div><strong>25</strong><span>лет в логистике</span></div>
         <div><strong>5 000+</strong><span>доставленных грузов</span></div>
         <div><strong>24/7</strong><span>поддержка клиентов</span></div>
         <div><strong>14</strong><span>городов присутствия</span></div>
@@ -138,7 +138,11 @@
           </article>
           <article class="service-card reveal" data-delay="180">
             <div class="service-number">04</div><div class="service-icon">◎</div>
-            <div><h3>Перевозки по СНГ</h3><p>Выстраиваем маршруты между Казахстаном, Россией и другими странами СНГ.</p><a href="#contacts">Подробнее <span>→</span></a></div>
+            <div><h3>Доставка из России</h3><p>Организуем доставку грузов из России с контролем документов и сроков.</p><a href="#contacts">Подробнее <span>→</span></a></div>
+          </article>
+          <article class="service-card reveal" data-delay="220">
+            <div class="service-number">05</div><div class="service-icon">▰</div>
+            <div><h3>Собственный транспорт</h3><p>Еврофуры, газели, манипуляторы и спецтехника для междугородних и городских перевозок.</p><a href="#contacts">Подобрать транспорт <span>→</span></a></div>
           </article>
         </div>
       </div>
@@ -201,14 +205,14 @@
           <div class="calculator-copy">
             <span class="section-kicker">Быстрый расчёт</span>
             <h2>Узнайте стоимость доставки</h2>
-            <p>Получите предварительную оценку. Финальная цена фиксируется после проверки параметров менеджером.</p>
+            <p>Получите предварительную оценку по действующей тарифной сетке. Все официальные цены указаны без НДС.</p>
             <ul><li><span>✓</span>Ответ менеджера до 15 минут</li><li><span>✓</span>Без скрытых платежей</li><li><span>✓</span>Страхование по запросу</li></ul>
           </div>
           <form class="calculator-form" id="calculatorForm">
             <div class="form-row">
               <label><span>Откуда</span><select name="from" required><option>Алматы</option><option>Астана</option><option>Шымкент</option><option>Караганда</option><option>Актобе</option><option>Франкфурт</option><option>Варшава</option><option>Милан</option><option>Париж</option></select></label>
               <button class="swap-button" type="button" id="swapCities" aria-label="Поменять города местами">⇄</button>
-              <label><span>Куда</span><select name="to" required><option>Астана</option><option>Алматы</option><option>Шымкент</option><option>Караганда</option><option>Актобе</option><option>Москва</option></select></label>
+              <label><span>Куда</span><select name="to" required>{% for destination in destinations %}<option {{ 'selected' if destination == 'Астана' }}>{{ destination }}</option>{% endfor %}</select></label>
             </div>
             <div class="form-row two">
               <label><span>Вес, кг</span><input type="number" name="weight" min="1" max="50000" value="100" required></label>
@@ -216,13 +220,13 @@
             </div>
             <fieldset class="transport-options">
               <legend>Тип перевозки</legend>
-              <label><input type="radio" name="transport" value="groupage" checked><span><i>▦</i><strong>Сборный</strong><small>Выгодно</small></span></label>
-              <label><input type="radio" name="transport" value="auto"><span><i>↗</i><strong>Авто</strong><small>Казахстан / СНГ</small></span></label>
+              <label><input type="radio" name="transport" value="groupage"><span><i>▦</i><strong>Сборный</strong><small>Выгодно</small></span></label>
+              <label><input type="radio" name="transport" value="auto" checked><span><i>↗</i><strong>Авто</strong><small>Казахстан / СНГ</small></span></label>
               <label><input type="radio" name="transport" value="air"><span><i>✈</i><strong>Авиа</strong><small>Из Европы</small></span></label>
             </fieldset>
             <div class="calculator-result" id="calculatorResult" aria-live="polite">
-              <div><small>Предварительная стоимость</small><strong id="calculatedPrice">от 12 000 ₸</strong></div>
-              <div><small>Срок доставки</small><strong id="calculatedTime">1–2 дня</strong></div>
+              <div><small>Предварительная стоимость</small><strong id="calculatedPrice">Нажмите «Рассчитать»</strong></div>
+              <div><small>Срок доставки</small><strong id="calculatedTime">По тарифной сетке</strong></div>
             </div>
             <button class="button button-primary button-wide" type="submit">Рассчитать стоимость <span>→</span></button>
           </form>
@@ -250,9 +254,9 @@
             <h2>Есть задача?<br>Найдём решение.</h2>
             <p>Оставьте контакты — логист уточнит детали и подготовит расчёт.</p>
             <div class="contact-list">
-              <a href="tel:+77770087777"><small>Телефон</small><strong>+7 777 008 77 77</strong></a>
+              <a href="tel:+77770087777"><small>Телефон</small><strong>{{ company.phone if company else '+7 777 008 77 77' }}</strong></a>
               <a href="https://wa.me/77770087777" target="_blank" rel="noopener"><small>WhatsApp</small><strong>Написать менеджеру ↗</strong></a>
-              <div><small>Адрес</small><strong>г. Алматы, Толе би 291, офис 24</strong></div>
+              <div><small>Адрес</small><strong>{{ company.address if company else 'г. Алматы, пр. Рыскулова 140/4, кабинет 416' }}</strong></div>
             </div>
           </div>
           <form class="contact-form" id="contactForm">
@@ -272,10 +276,10 @@
     <div class="container footer-main">
       <div><a class="brand brand-footer" href="#top"><img class="brand-symbol" src="{{ url_for('static', filename='assets/icstroy-mark.svg') }}" alt=""><span class="brand-copy"><strong>ICSTROY</strong><small>LOGISTICS</small></span></a><p>Надёжные грузоперевозки<br>по Казахстану и СНГ.</p></div>
       <div><strong>Навигация</strong><a href="#services">Услуги</a><a href="#process">Как мы работаем</a><a href="#leadership">О компании</a><a href="#calculator">Калькулятор</a></div>
-      <div><strong>Контакты</strong><a href="tel:+77770087777">+7 777 008 77 77</a><span>Алматы, Толе би 291</span><span>Пн–Вс, круглосуточно</span></div>
+      <div><strong>Контакты</strong><a href="tel:+77770087777">{{ company.phone if company else '+7 777 008 77 77' }}</a><span>Алматы, пр. Рыскулова 140/4, каб. 416</span><span>Пн–Вс, круглосуточно</span></div>
       <div><strong>Материалы</strong><a href="{{ url_for('public.brandbook') }}">Брендбук →</a><a href="{{ url_for('crm.dashboard') }}">Открыть CRM →</a></div>
     </div>
-    <div class="container footer-bottom"><span>© 2026 icstroy</span><span>Все права защищены</span><a href="{{ url_for('public.privacy') }}">Политика конфиденциальности</a></div>
+    <div class="container footer-bottom"><span>© 2026 {{ company.legal_name if company else 'ТОО «IC STROY GROUP»' }}</span><span>БИН {{ company.bin if company else '251140024698' }}</span><a href="{{ url_for('public.privacy') }}">Политика конфиденциальности</a></div>
   </footer>
 
   <a class="whatsapp-button" href="https://wa.me/77770087777" target="_blank" rel="noopener noreferrer" aria-label="Написать в WhatsApp">

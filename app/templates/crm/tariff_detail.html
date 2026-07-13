@@ -1,27 +1,11 @@
-{% extends "crm/base.html" %}
-{% block title %}{{ tariff.name }}{% endblock %}
-{% block page_title %}Редактирование тарифа{% endblock %}
+{% extends "crm/base.html" %}{% block title %}{{ tariff.name }}{% endblock %}{% block page_title %}Редактирование тарифа{% endblock %}
 {% block top_action %}<a class="admin-secondary" href="{{ url_for('crm.tariffs') }}">← К тарифам</a>{% endblock %}
-{% block content %}
-<div class="page-intro"><div><h2>{{ tariff.name }}</h2><p>Сохранённые значения сразу используются калькулятором сайта</p></div><span class="info-badge {{ '' if tariff.is_active else 'muted' }}">{{ 'Активен' if tariff.is_active else 'Выключен' }}</span></div>
-<article class="admin-panel form-panel">
-  <form method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    <div class="admin-form-grid">
-      <label><span>Название *</span><input name="name" value="{{ tariff.name }}" required></label>
-      <label><span>Услуга *</span><select name="service_type">{% for type,label in service_labels.items() %}<option value="{{ type.value }}" {{ 'selected' if tariff.service_type == type }}>{{ label }}</option>{% endfor %}</select></label>
-      <label><span>Откуда *</span><input name="origin" value="{{ tariff.origin }}" required></label>
-      <label><span>Куда *</span><input name="destination" value="{{ tariff.destination }}" required></label>
-      <label><span>Ставка, ₸/кг *</span><input type="number" step=".01" min=".01" name="price_per_kg" value="{{ tariff.price_per_kg }}" required></label>
-      <label><span>Минимальная цена, ₸</span><input type="number" step=".01" min="0" name="minimum_price" value="{{ tariff.minimum_price }}"></label>
-      <label><span>Объёмный коэффициент, кг/м³</span><input type="number" step=".01" min="1" name="volumetric_factor" value="{{ tariff.volumetric_factor }}"></label>
-      <label><span>Шаг округления, ₸</span><input type="number" step=".01" min="1" name="rounding_step" value="{{ tariff.rounding_step }}"></label>
-      <label><span>Срок от, дней</span><input type="number" min="1" name="delivery_days_min" value="{{ tariff.delivery_days_min }}"></label>
-      <label><span>Срок до, дней</span><input type="number" min="1" name="delivery_days_max" value="{{ tariff.delivery_days_max }}"></label>
-      <label><span>Действует с</span><input type="date" name="valid_from" value="{{ tariff.valid_from.isoformat() }}"></label>
-      <label><span>Действует до</span><input type="date" name="valid_until" value="{{ tariff.valid_until.isoformat() if tariff.valid_until else '' }}"></label>
-    </div>
-    <div class="form-actions"><a class="admin-secondary" href="{{ url_for('crm.tariffs') }}">Отмена</a><button class="admin-primary" type="submit">Сохранить изменения</button></div>
-  </form>
-</article>
-{% endblock %}
+{% block content %}<div class="page-intro"><div><h2>{{ tariff.name }}</h2><p>Сохранённые значения сразу используются калькулятором сайта</p></div><span class="info-badge {{ '' if tariff.is_active else 'muted' }}">{{ 'Активен' if tariff.is_active else 'Выключен' }}</span></div>
+<article class="admin-panel form-panel"><form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><div class="admin-form-grid">
+  <label><span>Название *</span><input name="name" value="{{ tariff.name }}" required></label><label><span>Услуга *</span><select name="service_type">{% for type,label in service_labels.items() %}<option value="{{ type.value }}" {{ 'selected' if tariff.service_type == type }}>{{ label }}</option>{% endfor %}</select></label>
+  <label><span>Откуда *</span><input name="origin" value="{{ tariff.origin }}" required></label><label><span>Куда *</span><input name="destination" value="{{ tariff.destination }}" required></label><label><span>Расстояние, км</span><input type="number" name="distance_km" value="{{ tariff.distance_km or '' }}"></label>
+  <label><span>Ставка, ₸/кг</span><input type="number" step=".01" min="0" name="price_per_kg" value="{{ tariff.price_per_kg or '' }}"></label><label><span>Ставка, ₸/м³</span><input type="number" step=".01" min="0" name="price_per_m3" value="{{ tariff.price_per_m3 or '' }}"></label><label><span>Фура 20 т, ₸</span><input type="number" step=".01" min="0" name="full_truck_price" value="{{ tariff.full_truck_price or '' }}"></label>
+  <label><span>Минимальная цена, ₸</span><input type="number" step=".01" min="0" name="minimum_price" value="{{ tariff.minimum_price }}"></label><label><span>Объёмный коэффициент</span><input type="number" step=".01" min="1" name="volumetric_factor" value="{{ tariff.volumetric_factor }}"></label><label><span>Шаг округления, ₸</span><input type="number" step=".01" min="1" name="rounding_step" value="{{ tariff.rounding_step }}"></label>
+  <label><span>Срок от, дней</span><input type="number" min="1" name="delivery_days_min" value="{{ tariff.delivery_days_min }}"></label><label><span>Срок до, дней</span><input type="number" min="1" name="delivery_days_max" value="{{ tariff.delivery_days_max }}"></label><label><span>Действует с</span><input type="date" name="valid_from" value="{{ tariff.valid_from.isoformat() }}"></label><label><span>Действует до</span><input type="date" name="valid_until" value="{{ tariff.valid_until.isoformat() if tariff.valid_until else '' }}"></label>
+  <label><span>Комментарий</span><input name="notes" value="{{ tariff.notes or '' }}"></label><label class="check-row"><input type="checkbox" name="vat_included" {{ 'checked' if tariff.vat_included }}><span>Цена включает НДС</span></label>
+</div><div class="form-actions"><a class="admin-secondary" href="{{ url_for('crm.tariffs') }}">Отмена</a><button class="admin-primary">Сохранить изменения</button></div></form></article>{% endblock %}
