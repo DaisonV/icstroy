@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="icstroy — грузоперевозки по Казахстану и СНГ. Расчёт стоимости, отслеживание груза и персональное сопровождение.">
+  <meta name="theme-color" content="#102326">
+  <title>icstroy — перевозки по Казахстану и СНГ</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="site.js" defer></script>
+</head>
+<body class="site-body">
+  <a class="skip-link" href="#main">Перейти к содержанию</a>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="icstroy — на главную">
+        <img class="brand-symbol" src="assets/icstroy-mark.svg" alt="">
+        <span class="brand-copy"><strong>ICSTROY</strong><small>LOGISTICS</small></span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="Основная навигация">
+        <a href="#services">Услуги</a>
+        <a href="#process">Как мы работаем</a>
+        <a href="#leadership">О компании</a>
+        <a href="#calculator">Калькулятор</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="header-phone" href="tel:+77770087777">
+          <span class="phone-dot" aria-hidden="true"></span>
+          <span><small>На связи 24/7</small><strong>+7 777 008 77 77</strong></span>
+        </a>
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="Открыть меню" aria-controls="mobileNav" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav" aria-label="Мобильная навигация" hidden>
+      <a href="#services">Услуги</a>
+      <a href="#process">Как мы работаем</a>
+      <a href="#leadership">О компании</a>
+      <a href="#calculator">Калькулятор</a>
+      <a href="#contacts">Контакты</a>
+      <a href="tel:+77770087777">Позвонить: +7 777 008 77 77</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb-one" aria-hidden="true"></div>
+      <div class="hero-orb hero-orb-two" aria-hidden="true"></div>
+      <div class="container hero-layout">
+        <div class="hero-copy reveal">
+          <div class="eyebrow"><span></span>Логистика без неопределённости</div>
+          <h1>Доставляем груз.<br><em>Вы контролируете путь.</em></h1>
+          <p class="hero-lead">Сборные грузы, перевозки по Казахстану и СНГ, а также авиадоставка из Европы — с понятными сроками и персональным менеджером.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#calculator">Рассчитать доставку <span>↗</span></a>
+            <button class="button button-ghost" type="button" data-open-tracking>Отследить груз</button>
+          </div>
+          <div class="hero-proof">
+            <div class="avatar-stack" aria-hidden="true"><span>А</span><span>Д</span><span>М</span></div>
+            <div><strong>4,9 из 5</strong><small>по оценкам наших клиентов</small></div>
+            <div class="stars" aria-label="Рейтинг 4,9 из 5">★★★★★</div>
+          </div>
+        </div>
+
+        <div class="hero-visual reveal" data-delay="120">
+          <div class="route-card">
+            <div class="route-card-head">
+              <div><small>Текущая перевозка</small><strong>IC-2048</strong></div>
+              <span class="status status-transit"><i></i>В пути</span>
+            </div>
+            <div class="route-points">
+              <div class="route-city"><span class="route-pin start"></span><div><small>Отправление</small><strong>Алматы</strong><span>12 июля, 09:40</span></div></div>
+              <div class="route-line"><span style="width:68%"></span><i style="left:68%">●</i></div>
+              <div class="route-city route-city-end"><span class="route-pin end"></span><div><small>Прибытие</small><strong>Астана</strong><span>Сегодня до 18:00</span></div></div>
+            </div>
+            <div class="route-footer">
+              <div><span class="mini-icon">▰</span><small>Груз</small><strong>1 240 кг</strong></div>
+              <div><span class="mini-icon">⌁</span><small>Расстояние</small><strong>1 215 км</strong></div>
+              <div><span class="mini-icon">◷</span><small>В пути</small><strong>18 ч</strong></div>
+            </div>
+          </div>
+          <div class="floating-note floating-note-manager">
+            <span class="manager-avatar">АК</span>
+            <span><small>Ваш менеджер</small><strong>Айдана К.</strong></span>
+            <i>онлайн</i>
+          </div>
+          <div class="floating-note floating-note-delivery"><span class="check-icon">✓</span><span><strong>98,7%</strong><small>доставок точно в срок</small></span></div>
+        </div>
+      </div>
+
+      <div class="container metrics reveal" data-delay="180">
+        <div><strong>20+</strong><span>лет в логистике</span></div>
+        <div><strong>5 000+</strong><span>доставленных грузов</span></div>
+        <div><strong>24/7</strong><span>поддержка клиентов</span></div>
+        <div><strong>14</strong><span>городов присутствия</span></div>
+      </div>
+    </section>
+
+    <section class="section services" id="services">
+      <div class="container">
+        <div class="section-heading reveal">
+          <div><span class="section-kicker">Наши услуги</span><h2>Решаем задачи<br>любой сложности</h2></div>
+          <p>Подбираем оптимальную схему перевозки под сроки, бюджет и особенности вашего груза.</p>
+        </div>
+        <div class="service-grid">
+          <article class="service-card featured reveal">
+            <div class="service-number">01</div><div class="service-icon">▦</div>
+            <div><span class="service-tag">Популярное</span><h3>Сборные грузы</h3><p>Объединяем небольшие партии в одну перевозку — вы платите только за место, которое занимает груз.</p><a href="#contacts">Оставить заявку <span>→</span></a></div>
+          </article>
+          <article class="service-card reveal" data-delay="60">
+            <div class="service-number">02</div><div class="service-icon">✈</div>
+            <div><h3>Авиадоставка из Европы</h3><p>Организуем срочную доставку грузов из европейских стран в Казахстан с полным сопровождением.</p><a href="#contacts">Подробнее <span>→</span></a></div>
+          </article>
+          <article class="service-card reveal" data-delay="120">
+            <div class="service-number">03</div><div class="service-icon">↗</div>
+            <div><h3>Грузы по Казахстану</h3><p>Доставляем сборные и отдельные партии между городами Казахстана.</p><a href="#contacts">Подробнее <span>→</span></a></div>
+          </article>
+          <article class="service-card reveal" data-delay="180">
+            <div class="service-number">04</div><div class="service-icon">◎</div>
+            <div><h3>Перевозки по СНГ</h3><p>Выстраиваем маршруты между Казахстаном, Россией и другими странами СНГ.</p><a href="#contacts">Подробнее <span>→</span></a></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section process-section" id="process">
+      <div class="container process-layout">
+        <div class="process-copy reveal">
+          <span class="section-kicker light">Как мы работаем</span>
+          <h2>От заявки до доставки — всё прозрачно</h2>
+          <p>Не заставляем вас разбираться в логистике. Берём организацию на себя и сообщаем о каждом важном событии.</p>
+          <a class="text-link" href="#contacts">Обсудить перевозку <span>↗</span></a>
+        </div>
+        <ol class="process-list">
+          <li class="reveal"><span>01</span><div><h3>Получаем заявку</h3><p>Уточняем маршрут, параметры груза, сроки и специальные условия.</p></div></li>
+          <li class="reveal" data-delay="60"><span>02</span><div><h3>Рассчитываем маршрут</h3><p>Предлагаем несколько вариантов и фиксируем стоимость.</p></div></li>
+          <li class="reveal" data-delay="120"><span>03</span><div><h3>Забираем и сопровождаем</h3><p>Назначаем транспорт и держим вас в курсе движения груза.</p></div></li>
+          <li class="reveal" data-delay="180"><span>04</span><div><h3>Доставляем получателю</h3><p>Закрываем документы и сохраняем историю перевозки в системе.</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section leader-section" id="leadership">
+      <div class="container leader-shell">
+        <figure class="leader-photo">
+          <img src="assets/gaukhar-kassymova.jpg" alt="Касымова Гаухар Булатовна — руководитель компании icstroy" loading="lazy">
+          <figcaption>
+            <span>25 лет</span>
+            <small>профессионального опыта</small>
+          </figcaption>
+          <div class="leader-photo-mark" aria-hidden="true"><img src="assets/icstroy-mark-white.svg" alt=""></div>
+        </figure>
+
+        <div class="leader-content">
+          <span class="section-kicker">Лидерство и ответственность</span>
+          <h2>За результатом<br>всегда стоят люди</h2>
+          <p class="leader-intro">Касымова Гаухар Булатовна — руководитель компании icstroy с многолетним опытом управления бизнесом и выстраивания долгосрочных отношений с клиентами и партнёрами.</p>
+
+          <div class="leader-name">
+            <div><small>Руководитель компании</small><h3>Касымова<br>Гаухар Булатовна</h3></div>
+            <span>IC</span>
+          </div>
+
+          <div class="leader-facts">
+            <div><strong>25</strong><span>лет профессионального опыта</span></div>
+            <div><strong>20</strong><span>лет руководит компаниями</span></div>
+          </div>
+
+          <div class="leader-principle">
+            <span>Управленческий подход</span>
+            <p>Каждый маршрут должен быть просчитан, клиент — информирован, а договорённости — выполнены.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section calculator-section" id="calculator">
+      <div class="container">
+        <div class="calculator-shell reveal">
+          <div class="calculator-copy">
+            <span class="section-kicker">Быстрый расчёт</span>
+            <h2>Узнайте стоимость доставки</h2>
+            <p>Получите предварительную оценку. Финальная цена фиксируется после проверки параметров менеджером.</p>
+            <ul><li><span>✓</span>Ответ менеджера до 15 минут</li><li><span>✓</span>Без скрытых платежей</li><li><span>✓</span>Страхование по запросу</li></ul>
+          </div>
+          <form class="calculator-form" id="calculatorForm">
+            <div class="form-row">
+              <label><span>Откуда</span><select name="from" required><option>Алматы</option><option>Астана</option><option>Шымкент</option><option>Караганда</option><option>Актобе</option><option>Франкфурт</option><option>Варшава</option><option>Милан</option><option>Париж</option></select></label>
+              <button class="swap-button" type="button" id="swapCities" aria-label="Поменять города местами">⇄</button>
+              <label><span>Куда</span><select name="to" required><option>Астана</option><option>Алматы</option><option>Шымкент</option><option>Караганда</option><option>Актобе</option><option>Москва</option></select></label>
+            </div>
+            <div class="form-row two">
+              <label><span>Вес, кг</span><input type="number" name="weight" min="1" max="50000" value="100" required></label>
+              <label><span>Объём, м³</span><input type="number" name="volume" min="0.1" max="120" step="0.1" value="0.5" required></label>
+            </div>
+            <fieldset class="transport-options">
+              <legend>Тип перевозки</legend>
+              <label><input type="radio" name="transport" value="groupage" checked><span><i>▦</i><strong>Сборный</strong><small>Выгодно</small></span></label>
+              <label><input type="radio" name="transport" value="auto"><span><i>↗</i><strong>Авто</strong><small>Казахстан / СНГ</small></span></label>
+              <label><input type="radio" name="transport" value="air"><span><i>✈</i><strong>Авиа</strong><small>Из Европы</small></span></label>
+            </fieldset>
+            <div class="calculator-result" id="calculatorResult" aria-live="polite">
+              <div><small>Предварительная стоимость</small><strong id="calculatedPrice">от 12 000 ₸</strong></div>
+              <div><small>Срок доставки</small><strong id="calculatedTime">1–2 дня</strong></div>
+            </div>
+            <button class="button button-primary button-wide" type="submit">Рассчитать стоимость <span>→</span></button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="section trust-section">
+      <div class="container trust-layout">
+        <div class="trust-copy reveal"><span class="section-kicker">Почему мы</span><h2>Относимся к вашему грузу как к своему</h2><p>Работаем по договору, проверяем перевозчиков и не пропадаем после получения оплаты.</p></div>
+        <div class="trust-grid">
+          <article class="reveal"><span>01</span><h3>Проверенные перевозчики</h3><p>Контролируем документы, транспорт и историю каждого партнёра.</p></article>
+          <article class="reveal" data-delay="60"><span>02</span><h3>Фиксированная цена</h3><p>Согласованная стоимость не меняется в процессе перевозки.</p></article>
+          <article class="reveal" data-delay="120"><span>03</span><h3>Контроль 24/7</h3><p>Менеджер следит за маршрутом и быстро решает любые вопросы.</p></article>
+          <article class="reveal" data-delay="180"><span>04</span><h3>Полный комплект документов</h3><p>Предоставляем договор, закрывающие документы и подтверждение доставки.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section contact-section" id="contacts">
+      <div class="container">
+        <div class="contact-shell reveal">
+          <div class="contact-copy">
+            <span class="section-kicker light">Свяжитесь с нами</span>
+            <h2>Есть задача?<br>Найдём решение.</h2>
+            <p>Оставьте контакты — логист уточнит детали и подготовит расчёт.</p>
+            <div class="contact-list">
+              <a href="tel:+77770087777"><small>Телефон</small><strong>+7 777 008 77 77</strong></a>
+              <a href="https://wa.me/77770087777" target="_blank" rel="noopener"><small>WhatsApp</small><strong>Написать менеджеру ↗</strong></a>
+              <div><small>Адрес</small><strong>г. Алматы, Толе би 291, офис 24</strong></div>
+            </div>
+          </div>
+          <form class="contact-form" id="contactForm">
+            <div class="form-row two"><label><span>Ваше имя</span><input name="name" autocomplete="name" placeholder="Как к вам обращаться?" required></label><label><span>Телефон</span><input type="tel" name="phone" autocomplete="tel" placeholder="+7 (___) ___-__-__" required></label></div>
+            <label><span>Маршрут</span><input name="route" placeholder="Например: Алматы — Астана"></label>
+            <label><span>Комментарий</span><textarea name="message" rows="3" placeholder="Что нужно перевезти, вес и желаемые сроки"></textarea></label>
+            <label class="consent"><input type="checkbox" required><span>Согласен на обработку персональных данных</span></label>
+            <button class="button button-dark button-wide" type="submit">Отправить заявку <span>→</span></button>
+            <p class="form-note">Демонстрационный режим: заявка пока не отправляется в CRM.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-main">
+      <div><a class="brand brand-footer" href="#top"><img class="brand-symbol" src="assets/icstroy-mark.svg" alt=""><span class="brand-copy"><strong>ICSTROY</strong><small>LOGISTICS</small></span></a><p>Надёжные грузоперевозки<br>по Казахстану и СНГ.</p></div>
+      <div><strong>Навигация</strong><a href="#services">Услуги</a><a href="#process">Как мы работаем</a><a href="#leadership">О компании</a><a href="#calculator">Калькулятор</a></div>
+      <div><strong>Контакты</strong><a href="tel:+77770087777">+7 777 008 77 77</a><span>Алматы, Толе би 291</span><span>Пн–Вс, круглосуточно</span></div>
+      <div><strong>Материалы</strong><a href="brandbook.html">Брендбук →</a><a href="crm.html">Открыть CRM →</a></div>
+    </div>
+    <div class="container footer-bottom"><span>© 2026 icstroy</span><span>Все права защищены</span><a href="#">Политика конфиденциальности</a></div>
+  </footer>
+
+  <a class="whatsapp-button" href="https://wa.me/77770087777" target="_blank" rel="noopener noreferrer" aria-label="Написать в WhatsApp">
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M16 3.2A12.8 12.8 0 0 0 5.13 22.75L3.45 28.8l6.2-1.62A12.8 12.8 0 1 0 16 3.2Zm0 2.3a10.5 10.5 0 1 1-5.84 19.24l-.42-.26-3.68.96.99-3.57-.28-.44A10.5 10.5 0 0 1 16 5.5Z" fill="currentColor"/>
+      <path d="M12.07 9.43c-.3-.67-.62-.68-.91-.69h-.78c-.27 0-.71.1-1.08.5-.37.4-1.42 1.39-1.42 3.39s1.46 3.93 1.66 4.2c.2.27 2.82 4.52 6.95 6.15 3.43 1.35 4.13 1.08 4.87 1.01.74-.07 2.39-.98 2.73-1.93.34-.95.34-1.76.24-1.93-.1-.17-.37-.27-.78-.47-.41-.2-2.39-1.18-2.76-1.32-.37-.14-.64-.2-.91.2-.27.4-1.05 1.32-1.28 1.59-.24.27-.47.3-.88.1-.41-.2-1.73-.64-3.3-2.04-1.22-1.09-2.04-2.43-2.28-2.84-.24-.4-.03-.62.18-.82.18-.18.41-.47.61-.71.2-.24.27-.4.41-.67.14-.27.07-.51-.03-.71-.1-.2-.9-2.21-1.25-3.02Z" fill="currentColor"/>
+    </svg>
+  </a>
+
+  <dialog class="tracking-dialog" id="trackingDialog">
+    <form method="dialog" class="dialog-card" id="trackingForm">
+      <button class="dialog-close" value="close" aria-label="Закрыть">×</button>
+      <span class="section-kicker">Отслеживание</span><h2>Где мой груз?</h2><p>Введите номер накладной. Для демонстрации используйте <button class="example-code" type="button" data-code="IC-2048">IC-2048</button>.</p>
+      <label><span>Номер накладной</span><input id="trackingInput" autocomplete="off" placeholder="IC-0000" required></label>
+      <button class="button button-primary button-wide" type="submit">Проверить статус</button>
+      <div class="tracking-result" id="trackingResult" aria-live="polite" hidden></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden><span>✓</span><div><strong>Заявка сохранена</strong><small>В рабочей версии она появится в CRM.</small></div></div>
+</body>
+</html>

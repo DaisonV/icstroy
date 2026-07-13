@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102326">
+  <meta name="description" content="Digital-брендбук icstroy: логотип, цвета, типографика и правила коммуникации.">
+  <title>icstroy — брендбук</title>
+  <base href="{{ url_for('static', filename='') }}">
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='brandbook.css') }}">
+</head>
+<body>
+  <header class="book-header">
+    <a class="book-brand" href="{{ url_for('public.index') }}" aria-label="Перейти на сайт icstroy">
+      <img src="assets/icstroy-mark.svg" alt="">
+      <span><strong>ICSTROY</strong><small>BRAND SYSTEM</small></span>
+    </a>
+    <nav aria-label="Разделы брендбука">
+      <a href="#logo">Логотип</a><a href="#colors">Цвета</a><a href="#type">Типографика</a><a href="#voice">Коммуникация</a><a href="#applications">Применение</a>
+    </nav>
+    <button type="button" onclick="window.print()">Сохранить PDF <span>↗</span></button>
+  </header>
+
+  <main>
+    <section class="book-hero">
+      <div class="hero-lines" aria-hidden="true"></div>
+      <div class="hero-index">01 / BRAND BOOK</div>
+      <div class="hero-main">
+        <div class="hero-copy">
+          <span class="version">Digital guide · v1.0 · 2026</span>
+          <h1>Движение.<br><em>Контроль.</em><br>Результат.</h1>
+          <p>Визуальная система icstroy объединяет технологичность, скорость и уверенность. Это практичный бренд для людей, которые отвечают за результат.</p>
+        </div>
+        <div class="hero-mark">
+          <span>PRIMARY MARK</span>
+          <img src="assets/icstroy-mark.svg" alt="Фирменный знак icstroy">
+          <div><i>#0c8e8e</i><i>#7a4a8c</i></div>
+        </div>
+      </div>
+      <div class="hero-footer"><span>Казахстан · СНГ · Европа</span><span>Логистика · Технологии · Сервис</span><span>icstroy © 2026</span></div>
+    </section>
+
+    <section class="book-section intro" id="essence">
+      <div class="section-number">01</div>
+      <div class="section-label">Основа бренда</div>
+      <div class="section-content">
+        <p class="lead">icstroy помогает бизнесу двигаться вперёд — <strong>предсказуемо, прозрачно и без лишнего шума.</strong></p>
+        <div class="principles">
+          <article><span>01</span><h3>Динамика</h3><p>Мы быстро реагируем, держим темп и всегда показываем следующий шаг.</p></article>
+          <article><span>02</span><h3>Надёжность</h3><p>Фиксируем договорённости и отвечаем за груз, сроки и коммуникацию.</p></article>
+          <article><span>03</span><h3>Ясность</h3><p>Объясняем сложное простым языком и не прячем важное в мелком тексте.</p></article>
+        </div>
+        <div class="positioning">
+          <div><small>Характер</small><strong>Уверенный<br>Точный<br>Человечный</strong></div>
+          <div><small>Обещание бренда</small><blockquote>«Груз движется.<br>Вы контролируете путь.»</blockquote></div>
+          <div><small>Архетип</small><strong>Проводник<br><span>+ Создатель</span></strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="book-section logo-section" id="logo">
+      <div class="section-number">02</div>
+      <div class="section-label">Логотип</div>
+      <div class="section-content">
+        <div class="section-head"><div><span>Основной знак</span><h2>Всегда направлен вперёд</h2></div><p>Скоростные линии переходят в стрелку и передают непрерывное движение. Разделённый шеврон соединяет два направления бренда: операционную точность и человеческий сервис.</p></div>
+
+        <div class="logo-stage primary-stage">
+          <div class="stage-tag">PRIMARY / LIGHT</div>
+          <div class="logo-lockup"><img src="assets/icstroy-mark.svg" alt="Знак icstroy"><span><strong>icstroy</strong><small>Движение под контролем</small></span></div>
+          <div class="baseline">Полноцветная версия · основной вариант</div>
+        </div>
+
+        <div class="logo-variants">
+          <div class="logo-stage dark-stage"><span>MONO / DARK</span><img src="assets/icstroy-mark-dark.svg" alt="Тёмный логотип icstroy"></div>
+          <div class="logo-stage teal-stage"><span>MONO / WHITE</span><img src="assets/icstroy-mark-white.svg" alt="Белый логотип icstroy"></div>
+          <div class="logo-stage purple-stage"><span>COLOR / DARK</span><img src="assets/icstroy-mark.svg" alt="Цветной логотип icstroy"></div>
+        </div>
+
+        <div class="logo-rules">
+          <article class="clearspace-card">
+            <div class="rule-head"><span>02.1</span><h3>Охранное поле</h3></div>
+            <div class="clearspace-visual"><b>x</b><div><img src="assets/icstroy-mark.svg" alt="Логотип с охранным полем"></div><i>x</i></div>
+            <p>Минимальное свободное пространство вокруг знака равно высоте просвета между скоростными линиями — <strong>X</strong>.</p>
+          </article>
+          <article class="size-card">
+            <div class="rule-head"><span>02.2</span><h3>Минимальный размер</h3></div>
+            <div class="size-visual"><div><img src="assets/icstroy-mark.svg" alt="Логотип 96 пикселей"><i>96 px · digital</i></div><div><img src="assets/icstroy-mark.svg" alt="Логотип 25 миллиметров"><i>25 mm · print</i></div></div>
+            <p>Если знак становится меньше, детали и цветовое разделение шеврона теряют выразительность.</p>
+          </article>
+        </div>
+
+        <div class="donts">
+          <div class="rule-head"><span>02.3</span><h3>Так делать нельзя</h3></div>
+          <div class="dont-grid">
+            <figure><div><img class="squashed" src="assets/icstroy-mark.svg" alt=""></div><figcaption><b>×</b> Не искажать пропорции</figcaption></figure>
+            <figure><div class="bad-color"><img src="assets/icstroy-mark.svg" alt=""></div><figcaption><b>×</b> Не менять фирменные цвета</figcaption></figure>
+            <figure><div class="busy-bg"><img src="assets/icstroy-mark.svg" alt=""></div><figcaption><b>×</b> Не ставить на шумный фон</figcaption></figure>
+            <figure><div><img class="rotated" src="assets/icstroy-mark.svg" alt=""></div><figcaption><b>×</b> Не вращать знак</figcaption></figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="book-section color-section" id="colors">
+      <div class="section-number">03</div>
+      <div class="section-label">Цветовая система</div>
+      <div class="section-content">
+        <div class="section-head"><div><span>Core palette</span><h2>Технологичность и характер</h2></div><p>Тил отвечает за движение, контроль и технологичность. Фиолетовый добавляет индивидуальность и отличает icstroy от типичного «транспортного синего».</p></div>
+        <div class="primary-colors">
+          <article class="color-card teal-color"><div class="color-name"><span>Основной</span><strong>IC Teal</strong></div><div class="color-data"><b>#0C8E8E</b><span>RGB 12 · 142 · 142</span><span>CMYK 92 · 0 · 0 · 44</span></div></article>
+          <article class="color-card purple-color"><div class="color-name"><span>Акцентный</span><strong>IC Purple</strong></div><div class="color-data"><b>#7A4A8C</b><span>RGB 122 · 74 · 140</span><span>CMYK 13 · 47 · 0 · 45</span></div></article>
+        </div>
+        <div class="support-colors">
+          <article style="--swatch:#102326;color:white"><span>Deep Ink</span><b>#102326</b><small>Фоны, текст</small></article>
+          <article style="--swatch:#e0f4f3"><span>Teal Mist</span><b>#E0F4F3</b><small>Подложки</small></article>
+          <article style="--swatch:#eee5f2"><span>Violet Mist</span><b>#EEE5F2</b><small>Акценты</small></article>
+          <article style="--swatch:#f4f7f7"><span>Cloud</span><b>#F4F7F7</b><small>Фон интерфейса</small></article>
+          <article style="--swatch:#66727a;color:white"><span>Steel</span><b>#66727A</b><small>Вторичный текст</small></article>
+          <article style="--swatch:#ffffff"><span>White</span><b>#FFFFFF</b><small>Воздух</small></article>
+        </div>
+        <div class="color-balance">
+          <div><span>60%</span><i style="width:60%;background:#f4f7f7"></i><small>Светлая база</small></div>
+          <div><span>25%</span><i style="width:25%;background:#0c8e8e"></i><small>Тил</small></div>
+          <div><span>10%</span><i style="width:10%;background:#102326"></i><small>Тёмный</small></div>
+          <div><span>5%</span><i style="width:5%;background:#7a4a8c"></i><small>Фиолетовый</small></div>
+        </div>
+        <div class="gradient-card"><span>Фирменный градиент</span><strong>135° · Teal → Purple</strong><code>linear-gradient(135deg, #0c8e8e 0%, #7a4a8c 100%)</code></div>
+        <div class="access-note"><span>AA</span><div><h3>Контраст и доступность</h3><p>Белый текст на IC Purple допустим для обычного текста. На IC Teal белый используем для крупных заголовков и кнопок; для мелкого текста применяем Deep Ink или затемнённый тил <b>#076466</b>.</p></div></div>
+      </div>
+    </section>
+
+    <section class="book-section type-section" id="type">
+      <div class="section-number">04</div>
+      <div class="section-label">Типографика</div>
+      <div class="section-content">
+        <div class="section-head"><div><span>Font system</span><h2>Сильный заголовок.<br>Спокойный текст.</h2></div><p>Контраст двух гарнитур создаёт технологичный характер, но сохраняет удобство чтения в интерфейсах и документах.</p></div>
+        <div class="type-display">
+          <div class="font-meta"><span>01 · DISPLAY</span><strong>Unbounded</strong><small>Semibold 600 / Bold 700</small></div>
+          <div class="font-sample"><strong>Движение<br>вперёд.</strong><span>Аа Бб Вв Гг Дд 0123456789</span></div>
+        </div>
+        <div class="type-body">
+          <div class="font-meta"><span>02 · TEXT & UI</span><strong>Manrope</strong><small>Regular 400 — ExtraBold 800</small></div>
+          <div class="font-sample"><h3>Понятно на любом этапе</h3><p>Manrope используется в основном тексте, интерфейсах CRM, презентациях и деловой документации. Она нейтральна, современна и хорошо читается даже в небольшом размере.</p><span>Аа Бб Вв Гг Дд Ее Жж Зз 0123456789</span></div>
+        </div>
+        <div class="type-scale">
+          <div><span>Display</span><strong style="font-size:42px">48 / 1.1</strong><small>Главные сообщения</small></div>
+          <div><span>H1</span><strong style="font-size:32px">40 / 1.15</strong><small>Заголовок страницы</small></div>
+          <div><span>H2</span><strong style="font-size:24px">30 / 1.2</strong><small>Разделы</small></div>
+          <div><span>Body</span><strong style="font-size:16px">16 / 1.65</strong><small>Основной текст</small></div>
+          <div><span>Caption</span><strong style="font-size:12px">12 / 1.5</strong><small>Подписи и данные</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="book-section voice-section" id="voice">
+      <div class="section-number">05</div>
+      <div class="section-label">Коммуникация</div>
+      <div class="section-content">
+        <div class="section-head"><div><span>Tone of voice</span><h2>Говорим по делу,<br>но не сухо</h2></div><p>Клиенту важны ответ, срок и следующий шаг. Мы не усложняем речь и не используем громкие обещания без доказательств.</p></div>
+        <div class="voice-axis"><div><span>Формально</span><i><b style="left:68%"></b></i><span>По-человечески</span></div><div><span>Осторожно</span><i><b style="left:72%"></b></i><span>Уверенно</span></div><div><span>Подробно</span><i><b style="left:61%"></b></i><span>Кратко</span></div></div>
+        <div class="voice-examples">
+          <article class="do"><span>✓ Говорим так</span><blockquote>«Груз выехал из Алматы и прибудет завтра до 18:00. Если время изменится, сразу сообщим.»</blockquote><p>Конкретно, спокойно, с понятным следующим шагом.</p></article>
+          <article class="dont"><span>× Не говорим так</span><blockquote>«Ваша заявка находится в процессе обработки соответствующим подразделением.»</blockquote><p>Канцелярит не объясняет, что происходит и когда ждать ответ.</p></article>
+        </div>
+        <div class="message-kit"><article><small>Главный слоган</small><strong>Движение под контролем.</strong></article><article><small>Для продаж</small><strong>Доставляем груз.<br>Вы контролируете путь.</strong></article><article><small>Для сервиса</small><strong>Всегда знаем,<br>где ваш груз.</strong></article></div>
+      </div>
+    </section>
+
+    <section class="book-section applications-section" id="applications">
+      <div class="section-number">06</div>
+      <div class="section-label">Применение</div>
+      <div class="section-content">
+        <div class="section-head"><div><span>Brand in action</span><h2>Единый образ<br>в каждой точке</h2></div><p>Система рассчитана на digital-продукты, транспорт, документы, униформу и наружные носители.</p></div>
+        <div class="mockup-grid">
+          <article class="truck-mockup">
+            <div class="mockup-label">Транспорт</div>
+            <div class="truck-box"><img src="assets/icstroy-mark-white.svg" alt="Логотип на кузове"><strong>icstroy</strong><span>ДВИЖЕНИЕ ПОД КОНТРОЛЕМ</span></div>
+            <div class="truck-cab"><i></i><b></b></div><div class="wheels"><i></i><i></i><i></i></div>
+          </article>
+          <article class="card-mockup">
+            <div class="business-card front"><img src="assets/icstroy-mark.svg" alt=""><strong>icstroy</strong><small>ДВИЖЕНИЕ ПОД КОНТРОЛЕМ</small></div>
+            <div class="business-card back"><span>АК</span><div><strong>Айдана Касымова</strong><small>Логист · Менеджер проектов</small><p>+7 777 008 77 77<br>hello@icstroy.kz</p></div></div>
+          </article>
+          <article class="ui-mockup">
+            <div class="ui-top"><img src="assets/icstroy-mark.svg" alt=""><span></span><span></span><i></i></div>
+            <div class="ui-body"><aside><b></b><b></b><b></b><b></b></aside><main><small>АКТИВНЫЕ ПЕРЕВОЗКИ</small><strong>18</strong><div class="ui-chart"><i></i></div><footer><b></b><b></b><b></b></footer></main></div>
+          </article>
+          <article class="pattern-mockup"><div class="pattern-repeat"><img src="assets/icstroy-mark-white.svg" alt=""><img src="assets/icstroy-mark-white.svg" alt=""><img src="assets/icstroy-mark-white.svg" alt=""><img src="assets/icstroy-mark-white.svg" alt=""></div><span>Фирменный паттерн</span></article>
+        </div>
+        <div class="asset-downloads">
+          <div><span>Brand assets</span><h3>Готовые файлы логотипа</h3><p>SVG подходит для сайта, печати и передачи подрядчикам без потери качества.</p></div>
+          <div><a href="assets/icstroy-mark.svg" download>Full color SVG <span>↓</span></a><a href="assets/icstroy-mark-white.svg" download>White SVG <span>↓</span></a><a href="assets/icstroy-mark-dark.svg" download>Dark SVG <span>↓</span></a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="book-footer"><div><img src="assets/icstroy-mark-white.svg" alt=""><strong>icstroy</strong></div><p>Digital brand guide · Version 1.0<br>Алматы, Казахстан · 2026</p><a href="{{ url_for('public.index') }}">Перейти на сайт →</a></footer>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#102326">
+  <title>{% block title %}CRM{% endblock %} — icstroy</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar" id="adminSidebar">
+    <a class="admin-brand" href="{{ url_for('crm.dashboard') }}"><img src="{{ url_for('static', filename='assets/icstroy-mark.svg') }}" alt=""><span><strong>ICSTROY</strong><small>CRM SYSTEM</small></span></a>
+    <nav>
+      <small>Рабочее пространство</small>
+      <a class="{{ 'active' if request.endpoint == 'crm.dashboard' }}" href="{{ url_for('crm.dashboard') }}"><i>⌂</i>Обзор</a>
+      <a class="{{ 'active' if 'application' in request.endpoint }}" href="{{ url_for('crm.applications') }}"><i>▤</i>Заявки</a>
+      <a class="{{ 'active' if 'shipment' in request.endpoint }}" href="{{ url_for('crm.shipments') }}"><i>↗</i>Перевозки</a>
+      <a class="{{ 'active' if 'client' in request.endpoint }}" href="{{ url_for('crm.clients') }}"><i>◎</i>Клиенты</a>
+      {% if current_user.role == Role.ADMIN %}
+      <small>Управление</small>
+      <a class="{{ 'active' if 'tariff' in request.endpoint }}" href="{{ url_for('crm.tariffs') }}"><i>₸</i>Тарифы</a>
+      <a class="{{ 'active' if request.endpoint == 'crm.seo' }}" href="{{ url_for('crm.seo') }}"><i>⌁</i>SEO сайта</a>
+      <a class="{{ 'active' if request.endpoint == 'crm.users' }}" href="{{ url_for('crm.users') }}"><i>♙</i>Сотрудники</a>
+      {% endif %}
+    </nav>
+    <div class="admin-user"><span>{{ ''.join(current_user.full_name.split()[:2])[:2].upper() }}</span><div><strong>{{ current_user.full_name }}</strong><small>{{ current_user.role.value }}</small></div><form method="post" action="{{ url_for('auth.logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button title="Выйти">↪</button></form></div>
+  </aside>
+  <div class="admin-overlay" id="adminOverlay"></div>
+  <main class="admin-main">
+    <header class="admin-topbar"><div><button class="admin-menu" id="adminMenu">☰</button><span>Рабочее пространство</span><h1>{% block page_title %}CRM{% endblock %}</h1></div><div><a class="view-site" href="{{ url_for('public.index') }}" target="_blank">Открыть сайт ↗</a>{% block top_action %}{% endblock %}</div></header>
+    <div class="admin-content">
+      {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+  <script>const s=document.querySelector('#adminSidebar'),o=document.querySelector('#adminOverlay'),m=document.querySelector('#adminMenu');function menu(v){s.classList.toggle('open',v);o.classList.toggle('open',v)}m?.addEventListener('click',()=>menu(true));o?.addEventListener('click',()=>menu(false));document.querySelectorAll('a[href="#new"]').forEach(a=>a.addEventListener('click',()=>{const d=document.querySelector('#new');if(d)d.open=true}));</script>
+  {% block scripts %}{% endblock %}
+</body></html>

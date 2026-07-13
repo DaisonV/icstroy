@@ -1,0 +1,28 @@
+databases:
+  - name: icstroy-db
+    databaseName: icstroy
+    user: icstroy
+
+services:
+  - type: web
+    name: icstroy
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: flask --app wsgi:app db upgrade && flask --app wsgi:app seed --without-demo && gunicorn --workers 2 --threads 4 --timeout 60 --bind 0.0.0.0:$PORT wsgi:app
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: icstroy-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_ENV
+        value: production
+      - key: SITE_URL
+        sync: false
+      - key: ADMIN_EMAIL
+        value: admin@icstroy.kz
+      - key: ADMIN_PASSWORD
+        sync: false

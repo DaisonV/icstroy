@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow"><title>Вход — icstroy CRM</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-brand">
+      <a href="{{ url_for('public.index') }}"><img src="{{ url_for('static', filename='assets/icstroy-mark-white.svg') }}" alt=""><strong>icstroy</strong></a>
+      <div><span>CRM · CONTROL CENTER</span><h1>Движение<br>под контролем.</h1><p>Единое рабочее пространство для заявок, клиентов, перевозок и тарифов.</p></div>
+      <small>© 2026 icstroy</small>
+    </section>
+    <section class="login-form-wrap">
+      <form class="login-form" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <img src="{{ url_for('static', filename='assets/icstroy-mark.svg') }}" alt="icstroy">
+        <span>Защищённый вход</span><h2>Добро пожаловать</h2><p>Введите данные сотрудника для доступа к CRM.</p>
+        {% with messages = get_flashed_messages(with_categories=true) %}{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}{% endwith %}
+        <label><span>Email</span><input type="email" name="email" autocomplete="username" placeholder="name@icstroy.kz" required autofocus></label>
+        <label><span>Пароль</span><input type="password" name="password" autocomplete="current-password" placeholder="••••••••••" required></label>
+        <label class="check"><input type="checkbox" name="remember" value="1"><span>Запомнить меня</span></label>
+        <button class="admin-primary" type="submit">Войти в CRM <span>→</span></button>
+        <small>Доступ предоставляется администратором компании.</small>
+      </form>
+    </section>
+  </main>
+</body></html>
+

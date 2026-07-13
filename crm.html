@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102326">
+  <meta name="robots" content="noindex,nofollow">
+  <title>icstroy CRM — рабочее пространство</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="crm.css">
+  <script src="crm.js" defer></script>
+</head>
+<body>
+  <div class="crm-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-head">
+        <a class="crm-brand" href="index.html" aria-label="icstroy — сайт">
+          <img class="crm-brand-logo" src="assets/icstroy-mark.svg" alt="">
+          <span><strong>ICSTROY</strong><small>CRM SYSTEM</small></span>
+        </a>
+        <button class="sidebar-close" id="sidebarClose" type="button" aria-label="Закрыть меню">×</button>
+      </div>
+
+      <nav class="crm-nav" aria-label="Навигация CRM">
+        <span class="nav-label">Рабочее пространство</span>
+        <button class="nav-item active" type="button" data-view="dashboard" data-title="Обзор">
+          <span class="nav-icon">⌂</span><span>Обзор</span>
+        </button>
+        <button class="nav-item" type="button" data-view="applications" data-title="Заявки">
+          <span class="nav-icon">▤</span><span>Заявки</span><b>8</b>
+        </button>
+        <button class="nav-item" type="button" data-view="shipments" data-title="Перевозки">
+          <span class="nav-icon">↗</span><span>Перевозки</span>
+        </button>
+        <button class="nav-item" type="button" data-view="clients" data-title="Клиенты">
+          <span class="nav-icon">◎</span><span>Клиенты</span>
+        </button>
+
+        <span class="nav-label nav-label-second">Управление</span>
+        <button class="nav-item" type="button" data-view="team" data-title="Команда">
+          <span class="nav-icon">♙</span><span>Команда</span>
+        </button>
+        <button class="nav-item" type="button" data-view="analytics" data-title="Аналитика">
+          <span class="nav-icon">⌁</span><span>Аналитика</span>
+        </button>
+        <button class="nav-item" type="button" data-view="settings" data-title="Настройки">
+          <span class="nav-icon">⚙</span><span>Настройки</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-support">
+        <span>?</span>
+        <div><strong>Нужна помощь?</strong><small>Напишите администратору</small></div>
+        <button type="button" aria-label="Открыть помощь">→</button>
+      </div>
+
+      <div class="sidebar-user">
+        <span class="user-avatar">ДА</span>
+        <div><strong>Дастан А.</strong><small>Администратор</small></div>
+        <button type="button" aria-label="Меню профиля">•••</button>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <main class="crm-main">
+      <header class="crm-topbar">
+        <div class="topbar-title">
+          <button class="sidebar-open" id="sidebarOpen" type="button" aria-label="Открыть меню">☰</button>
+          <div><span>Рабочее пространство</span><h1 id="viewTitle">Обзор</h1></div>
+        </div>
+        <div class="topbar-actions">
+          <label class="global-search"><span>⌕</span><input type="search" id="globalSearch" placeholder="Поиск по CRM" aria-label="Поиск по CRM"><kbd>⌘ K</kbd></label>
+          <button class="icon-button" type="button" aria-label="Уведомления">♢<i></i></button>
+          <button class="primary-action" id="newApplicationButton" type="button"><span>＋</span>Новая заявка</button>
+        </div>
+      </header>
+
+      <div class="crm-content">
+        <section class="crm-view active" id="view-dashboard" data-view-panel="dashboard">
+          <div class="welcome-row">
+            <div><h2>Доброе утро, Дастан!</h2><p>Вот что происходит в компании сегодня, 13 июля.</p></div>
+            <div class="sync-state"><i></i><span><strong>Система работает</strong><small>Данные обновлены только что</small></span></div>
+          </div>
+
+          <div class="kpi-grid">
+            <article class="kpi-card">
+              <div class="kpi-top"><span class="kpi-icon lime">▤</span><span class="trend up">↗ 12,4%</span></div>
+              <small>Новые заявки</small><strong>24</strong><p>за последние 7 дней</p>
+            </article>
+            <article class="kpi-card">
+              <div class="kpi-top"><span class="kpi-icon teal">↗</span><span class="trend up">↗ 8,2%</span></div>
+              <small>Активные перевозки</small><strong>18</strong><p>12 в пути · 6 на погрузке</p>
+            </article>
+            <article class="kpi-card">
+              <div class="kpi-top"><span class="kpi-icon violet">₸</span><span class="trend up">↗ 18,7%</span></div>
+              <small>Выручка за месяц</small><strong>8,4 млн ₸</strong><p>план выполнен на 74%</p>
+            </article>
+            <article class="kpi-card">
+              <div class="kpi-top"><span class="kpi-icon orange">◷</span><span class="trend down">↘ 2,1%</span></div>
+              <small>Среднее время ответа</small><strong>8 мин</strong><p>цель — менее 10 минут</p>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel revenue-panel">
+              <div class="panel-head">
+                <div><h3>Динамика выручки</h3><p>Поступления по завершённым перевозкам</p></div>
+                <select aria-label="Период графика"><option>Последние 6 месяцев</option><option>Этот год</option></select>
+              </div>
+              <div class="chart-summary"><strong>34,8 млн ₸</strong><span>↗ 16,8% к прошлому периоду</span></div>
+              <div class="line-chart" aria-label="График выручки с февраля по июль">
+                <div class="chart-y"><span>10 млн</span><span>7,5 млн</span><span>5 млн</span><span>2,5 млн</span><span>0</span></div>
+                <svg viewBox="0 0 640 210" role="img" aria-label="Выручка растёт с 3,8 до 8,4 миллионов тенге">
+                  <defs><linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#0c8e8e" stop-opacity=".26"/><stop offset="1" stop-color="#0c8e8e" stop-opacity="0"/></linearGradient></defs>
+                  <g class="grid-lines"><line x1="0" y1="10" x2="640" y2="10"/><line x1="0" y1="58" x2="640" y2="58"/><line x1="0" y1="106" x2="640" y2="106"/><line x1="0" y1="154" x2="640" y2="154"/><line x1="0" y1="202" x2="640" y2="202"/></g>
+                  <path class="area" d="M0 151 C45 142,65 127,110 134 S180 114,220 119 S290 92,330 103 S395 77,440 85 S510 51,550 63 S610 35,640 31 L640 210 L0 210 Z"/>
+                  <path class="line" d="M0 151 C45 142,65 127,110 134 S180 114,220 119 S290 92,330 103 S395 77,440 85 S510 51,550 63 S610 35,640 31"/>
+                  <g class="chart-dots"><circle cx="0" cy="151" r="4"/><circle cx="110" cy="134" r="4"/><circle cx="220" cy="119" r="4"/><circle cx="330" cy="103" r="4"/><circle cx="440" cy="85" r="4"/><circle cx="550" cy="63" r="4"/><circle cx="640" cy="31" r="5"/></g>
+                </svg>
+                <div class="chart-x"><span>Фев</span><span>Мар</span><span>Апр</span><span>Май</span><span>Июн</span><span>Июл</span></div>
+              </div>
+            </article>
+
+            <article class="panel status-panel">
+              <div class="panel-head"><div><h3>Статусы перевозок</h3><p>Текущая загрузка</p></div><button class="panel-menu" type="button">•••</button></div>
+              <div class="donut-wrap">
+                <div class="donut"><div><strong>34</strong><small>всего</small></div></div>
+                <div class="status-legend">
+                  <div><span class="legend-dot transit"></span><span>В пути</span><strong>18</strong></div>
+                  <div><span class="legend-dot loading"></span><span>Погрузка</span><strong>6</strong></div>
+                  <div><span class="legend-dot delivered"></span><span>Доставлено</span><strong>8</strong></div>
+                  <div><span class="legend-dot delayed"></span><span>Задержка</span><strong>2</strong></div>
+                </div>
+              </div>
+              <button class="secondary-action full" type="button" data-go-view="shipments">Все перевозки <span>→</span></button>
+            </article>
+          </div>
+
+          <div class="bottom-grid">
+            <article class="panel orders-panel">
+              <div class="panel-head"><div><h3>Последние заявки</h3><p>Новые обращения клиентов</p></div><button class="text-action" type="button" data-go-view="applications">Смотреть все →</button></div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Заявка</th><th>Клиент</th><th>Маршрут</th><th>Стоимость</th><th>Статус</th><th></th></tr></thead>
+                  <tbody>
+                    <tr><td><strong>#IC-1048</strong><small>сегодня, 10:42</small></td><td><span class="client-cell"><i class="company-avatar blue">TS</i><span><strong>TOO TransStroy</strong><small>Алихан С.</small></span></span></td><td><strong>Алматы → Астана</strong><small>1 240 кг · Авто</small></td><td><strong>148 800 ₸</strong></td><td><span class="table-status new">Новая</span></td><td><button class="row-menu">•••</button></td></tr>
+                    <tr><td><strong>#IC-1047</strong><small>сегодня, 09:18</small></td><td><span class="client-cell"><i class="company-avatar green">AK</i><span><strong>Asia Kompлект</strong><small>Мадина К.</small></span></span></td><td><strong>Шымкент → Алматы</strong><small>860 кг · Авто</small></td><td><strong>111 800 ₸</strong></td><td><span class="table-status calc">Расчёт</span></td><td><button class="row-menu">•••</button></td></tr>
+                    <tr><td><strong>#IC-1046</strong><small>вчера, 18:05</small></td><td><span class="client-cell"><i class="company-avatar violet">GB</i><span><strong>Global Build</strong><small>Роман П.</small></span></span></td><td><strong>Франкфурт → Алматы</strong><small>680 кг · Авиа</small></td><td><strong>1 071 000 ₸</strong></td><td><span class="table-status agreed">Согласовано</span></td><td><button class="row-menu">•••</button></td></tr>
+                    <tr><td><strong>#IC-1045</strong><small>вчера, 15:31</small></td><td><span class="client-cell"><i class="company-avatar orange">NS</i><span><strong>Nomad Supply</strong><small>Асия Т.</small></span></span></td><td><strong>Актобе → Караганда</strong><small>2 100 кг · Авто</small></td><td><strong>378 000 ₸</strong></td><td><span class="table-status transit">В работе</span></td><td><button class="row-menu">•••</button></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="panel activity-panel">
+              <div class="panel-head"><div><h3>Активность</h3><p>Последние события</p></div></div>
+              <div class="activity-list">
+                <div><span class="activity-icon delivered">✓</span><p><strong>Груз #IC-1031 доставлен</strong><small>Менеджер Айдана К. · 8 минут назад</small></p></div>
+                <div><span class="activity-icon message">✉</span><p><strong>Новый комментарий</strong><small>В заявке #IC-1046 · 24 минуты назад</small></p></div>
+                <div><span class="activity-icon payment">₸</span><p><strong>Получена оплата 286 000 ₸</strong><small>От TOO Mega Trade · 1 час назад</small></p></div>
+                <div><span class="activity-icon client">＋</span><p><strong>Добавлен новый клиент</strong><small>TOO Qaz Industry · 2 часа назад</small></p></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="crm-view" id="view-applications" data-view-panel="applications" hidden>
+          <div class="view-heading"><div><h2>Заявки</h2><p>Все обращения клиентов в одном месте</p></div><button class="primary-action duplicate-new" type="button"><span>＋</span>Новая заявка</button></div>
+          <div class="filter-bar"><label class="list-search"><span>⌕</span><input id="applicationSearch" type="search" placeholder="Номер, клиент или маршрут"></label><select id="statusFilter"><option value="all">Все статусы</option><option value="Новая">Новые</option><option value="Расчёт">На расчёте</option><option value="Согласовано">Согласованные</option></select><button class="secondary-action" type="button">Фильтры</button><button class="secondary-action" type="button">Экспорт</button></div>
+          <article class="panel list-panel">
+            <div class="table-wrap"><table id="applicationsTable"><thead><tr><th><input type="checkbox" aria-label="Выбрать все"></th><th>Заявка</th><th>Клиент</th><th>Маршрут</th><th>Параметры</th><th>Стоимость</th><th>Статус</th><th>Менеджер</th><th></th></tr></thead><tbody>
+              <tr data-status="Новая" data-search="ic-1048 transstroy алматы астана"><td><input type="checkbox" aria-label="Выбрать IC-1048"></td><td><strong>#IC-1048</strong><small>13 июл, 10:42</small></td><td><strong>TOO TransStroy</strong><small>Алихан С.</small></td><td><strong>Алматы → Астана</strong></td><td><strong>1 240 кг</strong><small>Авто · 5,2 м³</small></td><td><strong>148 800 ₸</strong></td><td><span class="table-status new">Новая</span></td><td><span class="manager-cell"><i>АК</i>Айдана К.</span></td><td><button class="row-menu">•••</button></td></tr>
+              <tr data-status="Расчёт" data-search="ic-1047 asia комплект шымкент алматы"><td><input type="checkbox" aria-label="Выбрать IC-1047"></td><td><strong>#IC-1047</strong><small>13 июл, 09:18</small></td><td><strong>Asia Комплект</strong><small>Мадина К.</small></td><td><strong>Шымкент → Алматы</strong></td><td><strong>860 кг</strong><small>Авто · 3,1 м³</small></td><td><strong>111 800 ₸</strong></td><td><span class="table-status calc">Расчёт</span></td><td><span class="manager-cell"><i>ЕТ</i>Ерлан Т.</span></td><td><button class="row-menu">•••</button></td></tr>
+              <tr data-status="Согласовано" data-search="ic-1046 global build франкфурт алматы авиа"><td><input type="checkbox" aria-label="Выбрать IC-1046"></td><td><strong>#IC-1046</strong><small>12 июл, 18:05</small></td><td><strong>Global Build</strong><small>Роман П.</small></td><td><strong>Франкфурт → Алматы</strong></td><td><strong>680 кг</strong><small>Авиа · 4,1 м³</small></td><td><strong>1 071 000 ₸</strong></td><td><span class="table-status agreed">Согласовано</span></td><td><span class="manager-cell"><i>АК</i>Айдана К.</span></td><td><button class="row-menu">•••</button></td></tr>
+              <tr data-status="Новая" data-search="ic-1044 qaz industry павлодар алматы"><td><input type="checkbox" aria-label="Выбрать IC-1044"></td><td><strong>#IC-1044</strong><small>12 июл, 11:47</small></td><td><strong>Qaz Industry</strong><small>Данияр А.</small></td><td><strong>Павлодар → Алматы</strong></td><td><strong>720 кг</strong><small>Авто · 2,8 м³</small></td><td><strong>На расчёте</strong></td><td><span class="table-status new">Новая</span></td><td><span class="manager-cell"><i>ЕТ</i>Ерлан Т.</span></td><td><button class="row-menu">•••</button></td></tr>
+            </tbody></table></div>
+            <div class="table-footer"><span id="applicationCount">Показано 4 из 24 заявок</span><div><button disabled>←</button><button class="active">1</button><button>2</button><button>3</button><button>→</button></div></div>
+          </article>
+        </section>
+
+        <section class="crm-view" id="view-shipments" data-view-panel="shipments" hidden>
+          <div class="view-heading"><div><h2>Перевозки</h2><p>Контроль активных и завершённых рейсов</p></div><button class="primary-action" type="button"><span>＋</span>Добавить перевозку</button></div>
+          <div class="shipment-board">
+            <article class="shipment-card"><div class="shipment-head"><span class="table-status transit">В пути</span><strong>#IC-2048</strong><button>•••</button></div><div class="shipment-route"><div><small>Откуда</small><strong>Алматы</strong><span>12 июля · 09:40</span></div><i><span style="width:68%"></span></i><div><small>Куда</small><strong>Астана</strong><span>13 июля · 18:00</span></div></div><div class="shipment-meta"><span><small>Клиент</small><strong>TOO TransStroy</strong></span><span><small>Водитель</small><strong>Марат С.</strong></span><span><small>Машина</small><strong>777 KZ 02</strong></span></div></article>
+            <article class="shipment-card"><div class="shipment-head"><span class="table-status calc">Погрузка</span><strong>#IC-2049</strong><button>•••</button></div><div class="shipment-route"><div><small>Откуда</small><strong>Шымкент</strong><span>Сегодня · 14:00</span></div><i><span style="width:14%"></span></i><div><small>Куда</small><strong>Караганда</strong><span>15 июля · 10:00</span></div></div><div class="shipment-meta"><span><small>Клиент</small><strong>Asia Комплект</strong></span><span><small>Водитель</small><strong>Нурлан К.</strong></span><span><small>Машина</small><strong>102 AM 17</strong></span></div></article>
+            <article class="shipment-card attention"><div class="shipment-head"><span class="table-status delayed">Задержка</span><strong>#IC-2041</strong><button>•••</button></div><div class="shipment-route"><div><small>Откуда</small><strong>Актобе</strong><span>11 июля · 07:20</span></div><i><span style="width:82%"></span></i><div><small>Куда</small><strong>Алматы</strong><span>Ожидается 14 июля</span></div></div><div class="shipment-meta"><span><small>Клиент</small><strong>Nomad Supply</strong></span><span><small>Водитель</small><strong>Серик Б.</strong></span><span><small>Причина</small><strong>Погодные условия</strong></span></div></article>
+          </div>
+        </section>
+
+        <section class="crm-view" id="view-clients" data-view-panel="clients" hidden>
+          <div class="view-heading"><div><h2>Клиенты</h2><p>Компании, контакты и история сотрудничества</p></div><button class="primary-action" type="button"><span>＋</span>Добавить клиента</button></div>
+          <div class="client-grid">
+            <article class="client-card"><div><span class="company-avatar blue large">TS</span><button>•••</button></div><h3>TOO TransStroy</h3><p>Строительные материалы</p><dl><div><dt>Перевозок</dt><dd>18</dd></div><div><dt>Оборот</dt><dd>4,2 млн ₸</dd></div></dl><footer><span class="manager-cell"><i>АК</i>Айдана К.</span><a href="tel:+77001234567">Позвонить</a></footer></article>
+            <article class="client-card"><div><span class="company-avatar green large">AK</span><button>•••</button></div><h3>Asia Комплект</h3><p>Оптовая торговля</p><dl><div><dt>Перевозок</dt><dd>12</dd></div><div><dt>Оборот</dt><dd>2,8 млн ₸</dd></div></dl><footer><span class="manager-cell"><i>ЕТ</i>Ерлан Т.</span><a href="tel:+77001234567">Позвонить</a></footer></article>
+            <article class="client-card"><div><span class="company-avatar violet large">GB</span><button>•••</button></div><h3>Global Build</h3><p>Промышленное оборудование</p><dl><div><dt>Перевозок</dt><dd>9</dd></div><div><dt>Оборот</dt><dd>6,1 млн ₸</dd></div></dl><footer><span class="manager-cell"><i>АК</i>Айдана К.</span><a href="tel:+77001234567">Позвонить</a></footer></article>
+          </div>
+        </section>
+
+        <section class="crm-view" id="view-placeholder" data-view-panel="placeholder" hidden>
+          <div class="placeholder-card"><span>◇</span><h2 id="placeholderTitle">Раздел в разработке</h2><p>Визуальная структура готова. Функции подключим вместе с серверной частью CRM.</p><button class="secondary-action" type="button" data-go-view="dashboard">Вернуться к обзору</button></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <dialog class="application-dialog" id="applicationDialog">
+    <form class="application-form" id="applicationForm" method="dialog">
+      <div class="modal-head"><div><span>Новая запись</span><h2>Создать заявку</h2></div><button value="cancel" aria-label="Закрыть">×</button></div>
+      <div class="modal-grid">
+        <label><span>Клиент</span><input name="client" placeholder="Название компании" required></label>
+        <label><span>Контактное лицо</span><input name="contact" placeholder="Имя клиента" required></label>
+        <label><span>Телефон</span><input type="tel" name="phone" placeholder="+7 ___ ___ __ __" required></label>
+        <label><span>Тип перевозки</span><select name="transport"><option>Сборный груз</option><option>Авто — Казахстан / СНГ</option><option>Авиа из Европы</option></select></label>
+        <label><span>Откуда</span><input name="from" placeholder="Город отправления" required></label>
+        <label><span>Куда</span><input name="to" placeholder="Город назначения" required></label>
+        <label><span>Вес, кг</span><input type="number" name="weight" min="1" placeholder="0"></label>
+        <label><span>Объём, м³</span><input type="number" name="volume" min="0" step="0.1" placeholder="0.0"></label>
+      </div>
+      <label><span>Комментарий</span><textarea name="comment" rows="3" placeholder="Особенности груза и пожелания клиента"></textarea></label>
+      <div class="modal-actions"><button class="secondary-action" value="cancel">Отмена</button><button class="primary-action" value="default" id="saveApplication">Создать заявку</button></div>
+    </form>
+  </dialog>
+
+  <div class="crm-toast" id="crmToast" hidden><span>✓</span><div><strong>Заявка создана</strong><small>Демо-запись добавлена в интерфейс</small></div></div>
+</body>
+</html>
