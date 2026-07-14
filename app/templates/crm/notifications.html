@@ -1,0 +1,23 @@
+{% extends "crm/base.html" %}
+{% block title %}Уведомления{% endblock %}
+{% block page_title %}Уведомления{% endblock %}
+{% block top_action %}
+  {% if unread_notifications %}<form method="post" action="{{ url_for('crm.read_all_notifications') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="admin-secondary read-all-button" aria-label="Прочитать все уведомления">Прочитать все</button></form>{% endif %}
+{% endblock %}
+{% block content %}
+<div class="page-intro"><div><h2>Центр уведомлений</h2><p>Новые заявки и назначенные вам задачи</p></div><span class="info-badge">{{ unread_notifications }} непрочитанных</span></div>
+<section class="notification-list">
+  {% for item in notifications %}
+  <article class="notification-row {{ 'unread' if not item.is_read }}">
+    <span class="notification-dot"></span>
+    <div><strong>{{ item.title }}</strong><p>{{ item.message }}</p><small>{{ local_datetime(item.created_at).strftime('%d.%m.%Y · %H:%M') }}</small></div>
+    <form method="post" action="{{ url_for('crm.open_notification', notification_id=item.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="admin-secondary">Открыть →</button>
+    </form>
+  </article>
+  {% else %}
+  <div class="empty-card">Уведомлений пока нет</div>
+  {% endfor %}
+</section>
+{% endblock %}

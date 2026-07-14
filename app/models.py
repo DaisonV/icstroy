@@ -45,6 +45,12 @@ class ServiceType(str, enum.Enum):
     AIR = "air"
 
 
+class TaskStatus(str, enum.Enum):
+    OPEN = "open"
+    DONE = "done"
+    CANCELLED = "cancelled"
+
+
 class TimestampMixin:
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
@@ -62,6 +68,9 @@ class User(UserMixin, TimestampMixin, db.Model):
     last_login_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
 
     managed_applications: Mapped[list["Application"]] = relationship(back_populates="manager", foreign_keys="Application.manager_id")
+    assigned_tasks: Mapped[list["CrmTask"]] = relationship(back_populates="assignee", foreign_keys="CrmTask.assignee_id")
+    created_tasks: Mapped[list["CrmTask"]] = relationship(back_populates="created_by", foreign_keys="CrmTask.created_by_id")
+    notifications: Mapped[list["Notification"]] = relationship(back_populates="recipient", cascade="all, delete-orphan")
 
     @property
     def is_active(self):
@@ -120,10 +129,70 @@ class Application(TimestampMixin, db.Model):
     client: Mapped[Client] = relationship(back_populates="applications")
     manager: Mapped[User] = relationship(back_populates="managed_applications", foreign_keys=[manager_id])
     shipment: Mapped["Shipment"] = relationship(back_populates="application", uselist=False)
+    tasks: Mapped[list["CrmTask"]] = relationship(back_populates="application", cascade="all, delete-orphan", order_by="CrmTask.due_at")
+    activities: Mapped[list["ApplicationActivity"]] = relationship(back_populates="application", cascade="all, delete-orphan", order_by="ApplicationActivity.created_at.desc()")
 
     @staticmethod
     def make_number():
         return "IC-" + datetime.now().strftime("%y%m") + "-" + secrets.token_hex(2).upper()
+
+
+class CrmTask(TimestampMixin, db.Model):
+    __tablename__ = "crm_tasks"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    application_id: Mapped[int] = mapped_column(ForeignKey("applications.id", ondelete="CASCADE"), nullable=False, index=True)
+    assignee_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    created_by_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
+    title: Mapped[str] = mapped_column(String(240), nullable=False)
+    notes: Mapped[str] = mapped_column(Text, nullable=True)
+    due_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    status: Mapped[TaskStatus] = mapped_column(Enum(TaskStatus, native_enum=False), default=TaskStatus.OPEN, nullable=False, index=True)
+    completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    application: Mapped[Application] = relationship(back_populates="tasks")
+    assignee: Mapped[User] = relationship(back_populates="assigned_tasks", foreign_keys=[assignee_id])
+    created_by: Mapped[User] = relationship(back_populates="created_tasks", foreign_keys=[created_by_id])
+
+    @property
+    def is_overdue(self):
+        if self.status != TaskStatus.OPEN:
+            return False
+        deadline = self.due_at
+        if deadline.tzinfo is None:
+            deadline = deadline.replace(tzinfo=timezone.utc)
+        return deadline < utcnow()
+
+
+class ApplicationActivity(db.Model):
+    __tablename__ = "application_activities"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    application_id: Mapped[int] = mapped_column(ForeignKey("applications.id", ondelete="CASCADE"), nullable=False, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    kind: Mapped[str] = mapped_column(String(40), default="note", nullable=False)
+    message: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False, index=True)
+
+    application: Mapped[Application] = relationship(back_populates="activities")
+    user: Mapped[User] = relationship()
+
+
+class Notification(db.Model):
+    __tablename__ = "notifications"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    application_id: Mapped[int] = mapped_column(ForeignKey("applications.id", ondelete="SET NULL"), nullable=True, index=True)
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    message: Mapped[str] = mapped_column(String(500), nullable=False)
+    link: Mapped[str] = mapped_column(String(500), nullable=True)
+    is_read: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, index=True)
+    read_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False, index=True)
+
+    recipient: Mapped[User] = relationship(back_populates="notifications")
+    application: Mapped[Application] = relationship()
 
 
 class Tariff(TimestampMixin, db.Model):

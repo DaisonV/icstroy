@@ -5,14 +5,16 @@
 <section class="stat-grid">
   <article><span class="stat-icon teal">▤</span><small>Все заявки</small><strong>{{ application_count }}</strong><p>{{ new_count }} новых требуют внимания</p></article>
   <article><span class="stat-icon purple">↗</span><small>Активные перевозки</small><strong>{{ active_shipments }}</strong><p>включая погрузку и задержки</p></article>
-  <article><span class="stat-icon blue">◎</span><small>Активные клиенты</small><strong>{{ client_count }}</strong><p>в клиентской базе</p></article>
+  <article><span class="stat-icon blue">✓</span><small>Открытые задачи</small><strong>{{ open_task_count }}</strong><p>{{ overdue_task_count }} просроченных требуют внимания</p></article>
   <article><span class="stat-icon orange">₸</span><small>Завершённые сделки</small><strong>{{ "{:,.0f}".format(revenue)|replace(',', ' ') }} ₸</strong><p>по закрытым заявкам</p></article>
 </section>
 <section class="dash-grid">
   <article class="admin-panel recent-panel"><header><div><h3>Последние заявки</h3><p>Новые обращения и текущая работа</p></div><a href="{{ url_for('crm.applications') }}">Все заявки →</a></header>
     <div class="admin-table-wrap"><table><thead><tr><th>Заявка</th><th>Клиент</th><th>Маршрут</th><th>Стоимость</th><th>Статус</th></tr></thead><tbody>{% for item in recent %}<tr><td><a href="{{ url_for('crm.application_detail', application_id=item.id) }}"><strong>{{ item.number }}</strong></a><small>{{ item.created_at.strftime('%d.%m.%Y %H:%M') }}</small></td><td><strong>{{ item.company_name or item.contact_name }}</strong><small>{{ item.phone }}</small></td><td>{{ item.origin or '—' }} → {{ item.destination or '—' }}</td><td>{{ "{:,.0f}".format(item.final_price or item.estimated_price or 0)|replace(',', ' ') }} ₸</td><td><span class="status-pill {{ item.status.value }}">{{ application_labels[item.status] }}</span></td></tr>{% else %}<tr><td colspan="5" class="empty">Заявок пока нет</td></tr>{% endfor %}</tbody></table></div>
   </article>
-  <article class="admin-panel status-summary"><header><div><h3>Статусы перевозок</h3><p>Текущая загрузка</p></div></header>{% for status, label in shipment_labels.items() %}<div><span><i class="dot {{ status.value }}"></i>{{ label }}</span><strong>{{ shipment_statuses.get(status, 0) }}</strong></div>{% endfor %}<a class="admin-secondary" href="{{ url_for('crm.shipments') }}">Открыть перевозки →</a></article>
+  <div class="dashboard-side">
+    <article class="admin-panel dashboard-tasks"><header><div><h3>Ближайшие задачи</h3><p>{{ overdue_task_count }} просроченных</p></div><a href="{{ url_for('crm.tasks') }}">Все →</a></header>{% for task in upcoming_tasks %}<a class="dashboard-task {{ 'overdue' if task.is_overdue }}" href="{{ url_for('crm.application_detail', application_id=task.application_id) }}#tasks"><i>{{ '!' if task.is_overdue else '○' }}</i><span><strong>{{ task.title }}</strong><small>{{ task.application.number }} · {{ local_datetime(task.due_at).strftime('%d.%m · %H:%M') }}</small></span></a>{% else %}<p class="workspace-empty">Открытых задач нет</p>{% endfor %}</article>
+    <article class="admin-panel status-summary"><header><div><h3>Статусы перевозок</h3><p>Текущая загрузка</p></div></header>{% for status, label in shipment_labels.items() %}<div><span><i class="dot {{ status.value }}"></i>{{ label }}</span><strong>{{ shipment_statuses.get(status, 0) }}</strong></div>{% endfor %}<a class="admin-secondary" href="{{ url_for('crm.shipments') }}">Открыть перевозки →</a></article>
+  </div>
 </section>
 {% endblock %}
-

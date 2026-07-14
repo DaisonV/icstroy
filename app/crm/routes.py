@@ -1,7 +1,8 @@
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from flask import abort, flash, redirect, render_template, request, url_for
+from flask import abort, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import selectinload
@@ -9,11 +10,13 @@ from sqlalchemy.orm import selectinload
 from . import bp
 from ..extensions import db
 from ..models import (
-    Application, ApplicationStatus, CityTariff, Client, CompanySetting, Role,
-    SeoSetting, ServiceType, Shipment, ShipmentStatus, Tariff, TrackingEvent, User,
+    Application, ApplicationActivity, ApplicationStatus, CityTariff, Client,
+    CompanySetting, CrmTask, Notification, Role, SeoSetting, ServiceType,
+    Shipment, ShipmentStatus, Tariff, TaskStatus, TrackingEvent, User,
 )
 from ..permissions import roles_required
 from ..services.audit import record_action
+from ..services.notifications import create_task_notification
 
 
 APPLICATION_LABELS = {
@@ -37,6 +40,11 @@ SERVICE_LABELS = {
     ServiceType.AUTO: "Авто — Казахстан / СНГ",
     ServiceType.AIR: "Авиа из Европы",
 }
+TASK_LABELS = {
+    TaskStatus.OPEN: "Открыта",
+    TaskStatus.DONE: "Выполнена",
+    TaskStatus.CANCELLED: "Отменена",
+}
 
 
 @bp.before_request
@@ -47,6 +55,14 @@ def protect_crm():
 
 @bp.app_context_processor
 def crm_labels():
+    unread_notifications = 0
+    if current_user.is_authenticated:
+        unread_notifications = db.session.scalar(
+            select(func.count(Notification.id)).where(
+                Notification.user_id == current_user.id,
+                Notification.is_read.is_(False),
+            )
+        ) or 0
     return {
         "application_labels": APPLICATION_LABELS,
         "shipment_labels": SHIPMENT_LABELS,
@@ -54,7 +70,11 @@ def crm_labels():
         "ApplicationStatus": ApplicationStatus,
         "ShipmentStatus": ShipmentStatus,
         "ServiceType": ServiceType,
+        "task_labels": TASK_LABELS,
+        "TaskStatus": TaskStatus,
         "Role": Role,
+        "unread_notifications": unread_notifications,
+        "local_datetime": local_datetime,
     }
 
 
@@ -67,6 +87,38 @@ def decimal_or_none(value):
         return None
 
 
+def configured_timezone():
+    try:
+        return ZoneInfo(current_app.config.get("APP_TIMEZONE", "Asia/Almaty"))
+    except ZoneInfoNotFoundError:
+        return timezone.utc
+
+
+def local_datetime(value):
+    if value is None:
+        return None
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=timezone.utc)
+    return value.astimezone(configured_timezone())
+
+
+def datetime_from_form(value):
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=configured_timezone())
+    return parsed.astimezone(timezone.utc)
+
+
+def crm_return_path(default):
+    candidate = request.form.get("next", "")
+    return candidate if candidate.startswith("/crm") else default
+
+
 @bp.get("")
 @bp.get("/")
 def dashboard():
@@ -77,6 +129,20 @@ def dashboard():
     revenue = db.session.scalar(select(func.coalesce(func.sum(Application.final_price), 0)).where(Application.status == ApplicationStatus.COMPLETED)) or 0
     recent = db.session.scalars(select(Application).order_by(Application.created_at.desc()).limit(8)).all()
     shipment_statuses = dict(db.session.execute(select(Shipment.status, func.count(Shipment.id)).group_by(Shipment.status)).all())
+    task_scope = [CrmTask.status == TaskStatus.OPEN]
+    if current_user.role != Role.ADMIN:
+        task_scope.append(CrmTask.assignee_id == current_user.id)
+    open_task_count = db.session.scalar(select(func.count(CrmTask.id)).where(*task_scope)) or 0
+    overdue_task_count = db.session.scalar(
+        select(func.count(CrmTask.id)).where(*task_scope, CrmTask.due_at < datetime.now(timezone.utc))
+    ) or 0
+    upcoming_tasks = db.session.scalars(
+        select(CrmTask)
+        .options(selectinload(CrmTask.application), selectinload(CrmTask.assignee))
+        .where(*task_scope)
+        .order_by(CrmTask.due_at)
+        .limit(5)
+    ).all()
     return render_template(
         "crm/dashboard.html",
         application_count=application_count,
@@ -86,6 +152,9 @@ def dashboard():
         revenue=revenue,
         recent=recent,
         shipment_statuses=shipment_statuses,
+        open_task_count=open_task_count,
+        overdue_task_count=overdue_task_count,
+        upcoming_tasks=upcoming_tasks,
     )
 
 
@@ -112,6 +181,12 @@ def applications():
         else:
             db.session.add(application)
             db.session.flush()
+            db.session.add(ApplicationActivity(
+                application_id=application.id,
+                user_id=current_user.id,
+                kind="created",
+                message="Заявка создана сотрудником CRM.",
+            ))
             record_action("create", "application", application.id, application.number)
             db.session.commit()
             flash("Заявка {} создана.".format(application.number), "success")
@@ -136,19 +211,193 @@ def applications():
 def application_detail(application_id):
     application = db.get_or_404(Application, application_id)
     if request.method == "POST":
+        previous_status = application.status
+        previous_manager_id = application.manager_id
         application.status = ApplicationStatus(request.form.get("status", application.status.value))
         application.manager_id = int(request.form["manager_id"]) if request.form.get("manager_id") else None
         application.client_id = int(request.form["client_id"]) if request.form.get("client_id") else None
         application.estimated_price = decimal_or_none(request.form.get("estimated_price"))
         application.final_price = decimal_or_none(request.form.get("final_price"))
         application.message = request.form.get("message", "").strip() or None
+        if previous_status != application.status:
+            db.session.add(ApplicationActivity(
+                application_id=application.id,
+                user_id=current_user.id,
+                kind="status",
+                message="Статус изменён: {} → {}.".format(
+                    APPLICATION_LABELS[previous_status], APPLICATION_LABELS[application.status]
+                ),
+            ))
+        if previous_manager_id != application.manager_id:
+            manager = db.session.get(User, application.manager_id) if application.manager_id else None
+            db.session.add(ApplicationActivity(
+                application_id=application.id,
+                user_id=current_user.id,
+                kind="manager",
+                message="Ответственный: {}.".format(manager.full_name if manager else "не назначен"),
+            ))
+            if manager is not None:
+                unassigned_tasks = db.session.scalars(
+                    select(CrmTask).where(
+                        CrmTask.application_id == application.id,
+                        CrmTask.assignee_id.is_(None),
+                        CrmTask.status == TaskStatus.OPEN,
+                    )
+                ).all()
+                for task in unassigned_tasks:
+                    task.assignee_id = manager.id
+                    create_task_notification(task)
         record_action("update", "application", application.id, application.status.value)
         db.session.commit()
         flash("Заявка обновлена.", "success")
         return redirect(url_for("crm.application_detail", application_id=application.id))
     managers = db.session.scalars(select(User).where(User.is_active_user.is_(True)).order_by(User.full_name)).all()
     clients = db.session.scalars(select(Client).where(Client.is_active.is_(True)).order_by(Client.company_name)).all()
-    return render_template("crm/application_detail.html", application=application, managers=managers, clients=clients)
+    default_task_due = (datetime.now(configured_timezone()) + timedelta(days=1)).replace(minute=0, second=0, microsecond=0)
+    phone_digits = "".join(character for character in application.phone if character.isdigit())
+    return render_template(
+        "crm/application_detail.html",
+        application=application,
+        managers=managers,
+        clients=clients,
+        default_task_due=default_task_due.strftime("%Y-%m-%dT%H:%M"),
+        phone_digits=phone_digits,
+    )
+
+
+@bp.post("/applications/<int:application_id>/activities")
+def add_application_activity(application_id):
+    application = db.get_or_404(Application, application_id)
+    message = request.form.get("message", "").strip()
+    if not message:
+        flash("Введите комментарий.", "error")
+    else:
+        db.session.add(ApplicationActivity(
+            application_id=application.id,
+            user_id=current_user.id,
+            kind="note",
+            message=message,
+        ))
+        record_action("comment", "application", application.id, message[:200])
+        db.session.commit()
+        flash("Комментарий добавлен.", "success")
+    return redirect(url_for("crm.application_detail", application_id=application.id) + "#activity")
+
+
+@bp.post("/applications/<int:application_id>/tasks")
+def add_application_task(application_id):
+    application = db.get_or_404(Application, application_id)
+    title = request.form.get("title", "").strip()
+    due_at = datetime_from_form(request.form.get("due_at"))
+    assignee_id = int(request.form["assignee_id"]) if request.form.get("assignee_id") else current_user.id
+    if not title or due_at is None:
+        flash("Укажите задачу и срок выполнения.", "error")
+    else:
+        task = CrmTask(
+            application=application,
+            assignee_id=assignee_id,
+            created_by_id=current_user.id,
+            title=title,
+            notes=request.form.get("notes", "").strip() or None,
+            due_at=due_at,
+        )
+        db.session.add(task)
+        db.session.flush()
+        db.session.add(ApplicationActivity(
+            application_id=application.id,
+            user_id=current_user.id,
+            kind="task",
+            message="Создана задача: {}.".format(task.title),
+        ))
+        create_task_notification(task)
+        record_action("create", "task", task.id, task.title)
+        db.session.commit()
+        flash("Задача создана.", "success")
+    return redirect(url_for("crm.application_detail", application_id=application.id) + "#tasks")
+
+
+@bp.post("/tasks/<int:task_id>/status")
+def task_status(task_id):
+    task = db.get_or_404(CrmTask, task_id)
+    try:
+        new_status = TaskStatus(request.form.get("status", TaskStatus.DONE.value))
+    except ValueError:
+        new_status = TaskStatus.DONE
+    task.status = new_status
+    task.completed_at = datetime.now(timezone.utc) if new_status == TaskStatus.DONE else None
+    db.session.add(ApplicationActivity(
+        application_id=task.application_id,
+        user_id=current_user.id,
+        kind="task",
+        message="Задача «{}» — {}.".format(task.title, TASK_LABELS[new_status].lower()),
+    ))
+    record_action("status", "task", task.id, new_status.value)
+    db.session.commit()
+    flash("Статус задачи обновлён.", "success")
+    return redirect(crm_return_path(url_for("crm.application_detail", application_id=task.application_id) + "#tasks"))
+
+
+@bp.get("/tasks")
+def tasks():
+    selected_status = request.args.get("status", TaskStatus.OPEN.value)
+    scope = request.args.get("scope", "all" if current_user.role == Role.ADMIN else "mine")
+    query = select(CrmTask).options(
+        selectinload(CrmTask.application), selectinload(CrmTask.assignee)
+    )
+    if selected_status != "all":
+        try:
+            query = query.where(CrmTask.status == TaskStatus(selected_status))
+        except ValueError:
+            selected_status = TaskStatus.OPEN.value
+            query = query.where(CrmTask.status == TaskStatus.OPEN)
+    if scope == "mine":
+        query = query.where(CrmTask.assignee_id == current_user.id)
+    items = db.session.scalars(query.order_by(CrmTask.due_at, CrmTask.created_at.desc())).all()
+    return render_template("crm/tasks.html", tasks=items, selected_status=selected_status, scope=scope)
+
+
+@bp.get("/notifications")
+def notifications():
+    items = db.session.scalars(
+        select(Notification)
+        .where(Notification.user_id == current_user.id)
+        .order_by(Notification.created_at.desc())
+        .limit(100)
+    ).all()
+    return render_template("crm/notifications.html", notifications=items)
+
+
+@bp.post("/notifications/<int:notification_id>/open")
+def open_notification(notification_id):
+    item = db.session.scalar(
+        select(Notification).where(
+            Notification.id == notification_id,
+            Notification.user_id == current_user.id,
+        )
+    )
+    if item is None:
+        abort(404)
+    item.is_read = True
+    item.read_at = datetime.now(timezone.utc)
+    db.session.commit()
+    return redirect(item.link or url_for("crm.notifications"))
+
+
+@bp.post("/notifications/read-all")
+def read_all_notifications():
+    items = db.session.scalars(
+        select(Notification).where(
+            Notification.user_id == current_user.id,
+            Notification.is_read.is_(False),
+        )
+    ).all()
+    now = datetime.now(timezone.utc)
+    for item in items:
+        item.is_read = True
+        item.read_at = now
+    db.session.commit()
+    flash("Все уведомления отмечены прочитанными.", "success")
+    return redirect(url_for("crm.notifications"))
 
 
 @bp.route("/clients", methods=["GET", "POST"])

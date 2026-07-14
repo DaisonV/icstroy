@@ -5,7 +5,7 @@ from sqlalchemy import func, select
 from app import create_app
 from app.commands import seed_data
 from app.extensions import db
-from app.models import Application, Tariff
+from app.models import Application, ApplicationActivity, CrmTask, Notification, Tariff, TaskStatus, User
 
 
 class TestConfig:
@@ -69,6 +69,7 @@ class IcstroyAppTest(unittest.TestCase):
 
     def test_website_application_is_saved(self):
         before = db.session.scalar(select(func.count(Application.id)))
+        notifications_before = db.session.scalar(select(func.count(Notification.id)))
         response = self.client.post("/api/applications", json={
             "name": "Тестовый клиент", "phone": "+7 700 000 00 00",
             "route": "Алматы — Астана", "message": "Паллеты, 100 кг",
@@ -77,6 +78,38 @@ class IcstroyAppTest(unittest.TestCase):
         self.assertTrue(response.get_json()["number"].startswith("IC-"))
         after = db.session.scalar(select(func.count(Application.id)))
         self.assertEqual(after, before + 1)
+        self.assertGreater(db.session.scalar(select(func.count(Notification.id))), notifications_before)
+        application = db.session.scalar(select(Application).order_by(Application.created_at.desc()))
+        self.assertIsNotNone(db.session.scalar(select(ApplicationActivity).where(ApplicationActivity.application_id == application.id)))
+        automatic_task = db.session.scalar(select(CrmTask).where(CrmTask.application_id == application.id))
+        self.assertIsNotNone(automatic_task)
+        self.assertEqual(automatic_task.status, TaskStatus.OPEN)
+
+    def test_manager_can_create_and_complete_task(self):
+        self.login()
+        application = db.session.scalar(select(Application).order_by(Application.id))
+        admin = db.session.scalar(select(User).where(User.email == "admin@icstroy.kz"))
+        response = self.client.post("/crm/applications/{}/tasks".format(application.id), data={
+            "title": "Позвонить клиенту",
+            "due_at": "2026-07-20T12:00",
+            "assignee_id": str(admin.id),
+            "notes": "Подтвердить маршрут",
+        }, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("Позвонить клиенту".encode(), response.data)
+        task = db.session.scalar(select(CrmTask).where(CrmTask.title == "Позвонить клиенту"))
+        self.assertIsNotNone(task)
+        self.assertEqual(task.status, TaskStatus.OPEN)
+        notification = db.session.scalar(select(Notification).where(Notification.user_id == admin.id, Notification.application_id == application.id))
+        self.assertIsNotNone(notification)
+        response = self.client.post("/crm/notifications/{}/open".format(notification.id), follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(notification.is_read)
+        response = self.client.post("/crm/tasks/{}/status".format(task.id), data={"status": "done"}, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(task.status, TaskStatus.DONE)
+        self.assertEqual(self.client.get("/crm/tasks").status_code, 200)
+        self.assertEqual(self.client.get("/crm/notifications").status_code, 200)
 
     def test_tracking_and_crm_authentication(self):
         tracking = self.client.get("/api/tracking/IC-2048")

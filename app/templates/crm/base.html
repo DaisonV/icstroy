@@ -18,6 +18,8 @@
       <a class="{{ 'active' if 'application' in request.endpoint }}" href="{{ url_for('crm.applications') }}"><i>▤</i>Заявки</a>
       <a class="{{ 'active' if 'shipment' in request.endpoint }}" href="{{ url_for('crm.shipments') }}"><i>↗</i>Перевозки</a>
       <a class="{{ 'active' if 'client' in request.endpoint }}" href="{{ url_for('crm.clients') }}"><i>◎</i>Клиенты</a>
+      <a class="{{ 'active' if request.endpoint in ('crm.tasks', 'crm.task_status') }}" href="{{ url_for('crm.tasks') }}"><i>✓</i>Задачи</a>
+      <a class="{{ 'active' if 'notification' in request.endpoint }}" href="{{ url_for('crm.notifications') }}"><i>◉</i>Уведомления{% if unread_notifications %}<b class="nav-count">{{ unread_notifications }}</b>{% endif %}</a>
       <a class="{{ 'active' if request.endpoint == 'crm.commercial_proposal' }}" href="{{ url_for('crm.commercial_proposal') }}"><i>▧</i>Коммерческое предложение</a>
       {% if current_user.role == Role.ADMIN %}
       <small>Управление</small>
@@ -31,7 +33,7 @@
   </aside>
   <div class="admin-overlay" id="adminOverlay"></div>
   <main class="admin-main">
-    <header class="admin-topbar"><div><button class="admin-menu" id="adminMenu">☰</button><span>Рабочее пространство</span><h1>{% block page_title %}CRM{% endblock %}</h1></div><div><a class="view-site" href="{{ url_for('public.index') }}" target="_blank">Открыть сайт ↗</a>{% block top_action %}{% endblock %}</div></header>
+    <header class="admin-topbar"><div><button class="admin-menu" id="adminMenu">☰</button><span>Рабочее пространство</span><h1>{% block page_title %}CRM{% endblock %}</h1></div><div><a class="view-site" href="{{ url_for('public.index') }}" target="_blank">Открыть сайт ↗</a><a class="notification-shortcut" href="{{ url_for('crm.notifications') }}" aria-label="Уведомления">◉{% if unread_notifications %}<b>{{ unread_notifications }}</b>{% endif %}</a>{% block top_action %}{% endblock %}</div></header>
     <div class="admin-content">
       {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
       {% block content %}{% endblock %}

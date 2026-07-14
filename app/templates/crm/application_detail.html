@@ -1,3 +1,67 @@
-{% extends "crm/base.html" %}{% block title %}{{ application.number }}{% endblock %}{% block page_title %}{{ application.number }}{% endblock %}
-{% block content %}<a class="back-link" href="{{ url_for('crm.applications') }}">← Все заявки</a><div class="detail-grid"><article class="admin-panel detail-main"><header><div><span class="status-pill {{ application.status.value }}">{{ application_labels[application.status] }}</span><h2>{{ application.company_name or application.contact_name }}</h2><p>{{ application.phone }}{% if application.email %} · {{ application.email }}{% endif %}</p></div></header><dl class="detail-data"><div><dt>Маршрут</dt><dd>{{ application.origin or '—' }} → {{ application.destination or '—' }}</dd></div><div><dt>Тип</dt><dd>{{ service_labels[application.service_type] }}</dd></div><div><dt>Груз</dt><dd>{{ application.cargo_name or 'Не указан' }}</dd></div><div><dt>Параметры</dt><dd>{{ application.weight_kg or 0 }} кг · {{ application.volume_m3 or 0 }} м³</dd></div><div><dt>Источник</dt><dd>{{ application.source }}</dd></div><div><dt>Создана</dt><dd>{{ application.created_at.strftime('%d.%m.%Y %H:%M') }}</dd></div></dl></article><form class="admin-panel edit-form" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><h3>Управление заявкой</h3><label><span>Статус</span><select name="status">{% for status,label in application_labels.items() %}<option value="{{ status.value }}" {{ 'selected' if application.status == status }}>{{ label }}</option>{% endfor %}</select></label><label><span>Менеджер</span><select name="manager_id"><option value="">Не назначен</option>{% for user in managers %}<option value="{{ user.id }}" {{ 'selected' if application.manager_id == user.id }}>{{ user.full_name }}</option>{% endfor %}</select></label><label><span>Клиент</span><select name="client_id"><option value="">Не привязан</option>{% for client in clients %}<option value="{{ client.id }}" {{ 'selected' if application.client_id == client.id }}>{{ client.company_name }}</option>{% endfor %}</select></label><div class="admin-form-grid"><label><span>Предварительно, ₸</span><input type="number" name="estimated_price" value="{{ application.estimated_price or '' }}"></label><label><span>Финально, ₸</span><input type="number" name="final_price" value="{{ application.final_price or '' }}"></label></div><label><span>Комментарий</span><textarea rows="5" name="message">{{ application.message or '' }}</textarea></label><button class="admin-primary">Сохранить изменения</button></form></div>{% endblock %}
+{% extends "crm/base.html" %}
+{% block title %}{{ application.number }}{% endblock %}
+{% block page_title %}{{ application.number }}{% endblock %}
+{% block top_action %}
+<a class="admin-secondary application-call" href="tel:{{ application.phone }}">Позвонить</a>
+<a class="admin-primary application-whatsapp" href="https://wa.me/{{ phone_digits }}" target="_blank" rel="noopener">WhatsApp ↗</a>
+{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('crm.applications') }}">← Все заявки</a>
+<div class="detail-grid">
+  <article class="admin-panel detail-main">
+    <header><div><span class="status-pill {{ application.status.value }}">{{ application_labels[application.status] }}</span><h2>{{ application.company_name or application.contact_name }}</h2><p>{{ application.phone }}{% if application.email %} · {{ application.email }}{% endif %}</p></div></header>
+    <dl class="detail-data">
+      <div><dt>Маршрут</dt><dd>{{ application.origin or '—' }} → {{ application.destination or '—' }}</dd></div>
+      <div><dt>Тип</dt><dd>{{ service_labels[application.service_type] }}</dd></div>
+      <div><dt>Груз</dt><dd>{{ application.cargo_name or 'Не указан' }}</dd></div>
+      <div><dt>Параметры</dt><dd>{{ application.weight_kg or 0 }} кг · {{ application.volume_m3 or 0 }} м³</dd></div>
+      <div><dt>Источник</dt><dd>{{ application.source }}</dd></div>
+      <div><dt>Создана</dt><dd>{{ local_datetime(application.created_at).strftime('%d.%m.%Y %H:%M') }}</dd></div>
+    </dl>
+    {% if application.message %}<div class="client-message"><small>Сообщение клиента</small><p>{{ application.message }}</p></div>{% endif %}
+  </article>
+  <form class="admin-panel edit-form" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h3>Управление заявкой</h3>
+    <label><span>Статус</span><select name="status">{% for status,label in application_labels.items() %}<option value="{{ status.value }}" {{ 'selected' if application.status == status }}>{{ label }}</option>{% endfor %}</select></label>
+    <label><span>Менеджер</span><select name="manager_id"><option value="">Не назначен</option>{% for user in managers %}<option value="{{ user.id }}" {{ 'selected' if application.manager_id == user.id }}>{{ user.full_name }}</option>{% endfor %}</select></label>
+    <label><span>Клиент</span><select name="client_id"><option value="">Не привязан</option>{% for client in clients %}<option value="{{ client.id }}" {{ 'selected' if application.client_id == client.id }}>{{ client.company_name }}</option>{% endfor %}</select></label>
+    <div class="admin-form-grid"><label><span>Предварительно, ₸</span><input type="number" name="estimated_price" value="{{ application.estimated_price or '' }}"></label><label><span>Финально, ₸</span><input type="number" name="final_price" value="{{ application.final_price or '' }}"></label></div>
+    <label><span>Описание заявки</span><textarea rows="5" name="message">{{ application.message or '' }}</textarea></label>
+    <button class="admin-primary">Сохранить изменения</button>
+  </form>
+</div>
 
+<section class="application-workspace">
+  <article class="admin-panel" id="tasks">
+    <header><div><h3>Задачи по заявке</h3><p>Следующий контакт и контроль договорённостей</p></div><span class="info-badge">{{ application.tasks|selectattr('status', 'equalto', TaskStatus.OPEN)|list|length }} открытых</span></header>
+    <div class="application-task-list">
+      {% for task in application.tasks %}
+      <div class="application-task {{ 'overdue' if task.is_overdue }} {{ task.status.value }}">
+        <i>{{ '✓' if task.status == TaskStatus.DONE else '!' if task.is_overdue else '○' }}</i>
+        <div><strong>{{ task.title }}</strong><span>{{ local_datetime(task.due_at).strftime('%d.%m.%Y · %H:%M') }} · {{ task.assignee.full_name if task.assignee else 'Без ответственного' }}</span>{% if task.notes %}<small>{{ task.notes }}</small>{% endif %}</div>
+        <form method="post" action="{{ url_for('crm.task_status', task_id=task.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="status" value="{{ 'open' if task.status == TaskStatus.DONE else 'done' }}"><button class="task-toggle" aria-label="Изменить статус">{{ 'Вернуть' if task.status == TaskStatus.DONE else 'Готово' }}</button></form>
+      </div>
+      {% else %}<p class="workspace-empty">Задач пока нет — добавьте следующее действие ниже.</p>{% endfor %}
+    </div>
+    <form class="workspace-form" method="post" action="{{ url_for('crm.add_application_task', application_id=application.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label class="span-2"><span>Что нужно сделать *</span><input name="title" placeholder="Например: согласовать стоимость с клиентом" required></label>
+      <label><span>Срок *</span><input type="datetime-local" name="due_at" value="{{ default_task_due }}" required></label>
+      <label><span>Ответственный</span><select name="assignee_id">{% for user in managers %}<option value="{{ user.id }}" {{ 'selected' if user.id == (application.manager_id or current_user.id) }}>{{ user.full_name }}</option>{% endfor %}</select></label>
+      <label class="span-2"><span>Комментарий</span><textarea name="notes" rows="2" placeholder="Дополнительные детали"></textarea></label>
+      <button class="admin-primary">＋ Добавить задачу</button>
+    </form>
+  </article>
+
+  <article class="admin-panel" id="activity">
+    <header><div><h3>История работы</h3><p>Комментарии и изменения по заявке</p></div></header>
+    <form class="activity-form" method="post" action="{{ url_for('crm.add_application_activity', application_id=application.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><textarea name="message" rows="3" placeholder="Добавить комментарий для команды" required></textarea><button class="admin-primary">Добавить</button></form>
+    <div class="activity-timeline">
+      {% for event in application.activities %}
+      <div><i class="{{ event.kind }}"></i><div><strong>{{ event.user.full_name if event.user else 'Система' }}</strong><p>{{ event.message }}</p><small>{{ local_datetime(event.created_at).strftime('%d.%m.%Y · %H:%M') }}</small></div></div>
+      {% else %}<p class="workspace-empty">История появится после первого действия.</p>{% endfor %}
+    </div>
+  </article>
+</section>
+{% endblock %}

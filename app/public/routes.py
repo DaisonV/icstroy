@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
 from flask import Response, current_app, jsonify, render_template, request, url_for
@@ -6,7 +6,8 @@ from sqlalchemy import select, text
 
 from . import bp
 from ..extensions import db
-from ..models import Application, CompanySetting, SeoSetting, ServiceType, Shipment, ShipmentStatus, Tariff
+from ..models import Application, ApplicationActivity, CompanySetting, CrmTask, SeoSetting, ServiceType, Shipment, ShipmentStatus, Tariff
+from ..services.notifications import create_application_notifications, send_telegram_application
 from ..services.pricing import calculate_quote
 
 
@@ -86,7 +87,21 @@ def create_application():
         source="website",
     )
     db.session.add(application)
+    db.session.flush()
+    db.session.add(ApplicationActivity(
+        application_id=application.id,
+        kind="created",
+        message="Заявка поступила с сайта.",
+    ))
+    db.session.add(CrmTask(
+        application=application,
+        title="Связаться с клиентом по новой заявке",
+        notes="Первичный ответ клиенту после обращения с сайта.",
+        due_at=datetime.now(timezone.utc) + timedelta(minutes=30),
+    ))
+    create_application_notifications(application)
     db.session.commit()
+    send_telegram_application(application)
     return jsonify({"ok": True, "number": application.number}), 201
 
 

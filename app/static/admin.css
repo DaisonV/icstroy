@@ -156,3 +156,109 @@
   .admin-drawer form>.drawer-close{right:10px;top:10px}
   .admin-drawer form>header{padding-right:48px}
 }
+
+/* Workflow, tasks and notifications */
+.nav-count{min-width:20px;height:20px;display:grid;place-items:center;margin-left:auto;padding:0 6px;border-radius:99px;background:var(--teal);color:white;font-size:9px}
+.notification-shortcut{width:40px;height:40px;position:relative;display:grid;place-items:center;flex:none;border:1px solid var(--line);border-radius:10px;background:white;color:var(--teal);font-size:15px}
+.notification-shortcut b{min-width:17px;height:17px;position:absolute;right:-5px;top:-5px;display:grid;place-items:center;padding:0 4px;border:2px solid white;border-radius:99px;background:#df795f;color:white;font-size:8px}
+.task-filters{align-items:center}
+.task-filters>span{flex:1}
+.task-list,.notification-list{display:grid;gap:10px}
+.task-row{min-width:0;display:grid;grid-template-columns:40px minmax(0,1fr) 220px auto;align-items:center;gap:15px;padding:16px 18px;border:1px solid var(--line);border-radius:15px;background:white}
+.task-row.overdue{border-color:#edb9ae;background:#fffaf9}
+.task-row.done{opacity:.7}
+.task-check{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;background:var(--teal-soft);color:var(--teal);font-size:16px;font-weight:800}
+.task-row.overdue .task-check{background:#ffebe8;color:#b95348}
+.task-row.done .task-check{background:#e5f5ec;color:var(--green)}
+.task-copy{min-width:0}
+.task-copy>div{display:flex;align-items:center;gap:9px}
+.task-copy strong{font-size:13px}
+.task-copy p{margin:5px 0 0;color:var(--muted);font-size:10px}
+.task-copy small{display:block;margin-top:5px;color:#8e9a97;font-size:9px}
+.task-meta{display:grid;gap:3px}
+.task-meta small,.task-meta span{color:var(--muted);font-size:9px}
+.task-meta strong{font-size:11px}
+.status-pill.open{background:var(--teal-soft);color:var(--teal)}
+.status-pill.done{background:#e5f5ec;color:var(--green)}
+.status-pill.cancelled{background:#edf1f0;color:var(--muted)}
+.notification-row{display:grid;grid-template-columns:12px minmax(0,1fr) auto;align-items:center;gap:15px;padding:18px 20px;border:1px solid var(--line);border-radius:15px;background:white}
+.notification-row.unread{border-color:#aadbd8;background:#fbffff;box-shadow:inset 3px 0 var(--teal)}
+.notification-dot{width:8px;height:8px;border-radius:50%;background:#c8d1cf}
+.notification-row.unread .notification-dot{background:var(--teal);box-shadow:0 0 0 5px rgba(12,142,142,.1)}
+.notification-row>div strong{font-size:13px}
+.notification-row>div p{margin:5px 0;color:var(--muted);font-size:11px}
+.notification-row>div small{color:#98a3a0;font-size:9px}
+.dashboard-side{min-width:0;display:grid;align-content:start;gap:16px}
+.dashboard-tasks{display:grid;gap:0}
+.dashboard-task{display:grid;grid-template-columns:26px 1fr;align-items:center;gap:9px;padding:12px 0;border-bottom:1px solid var(--line)}
+.dashboard-task i{width:24px;height:24px;display:grid;place-items:center;border-radius:8px;background:var(--teal-soft);color:var(--teal);font-size:10px;font-style:normal;font-weight:800}
+.dashboard-task.overdue i{background:#ffebe8;color:#b95348}
+.dashboard-task span{min-width:0;display:grid}
+.dashboard-task strong{overflow:hidden;font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+.dashboard-task small{margin-top:3px;color:var(--muted);font-size:8px}
+.application-workspace{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-top:16px}
+.application-workspace>.admin-panel{min-width:0}
+.client-message{padding:15px;border-radius:12px;background:var(--bg)}
+.client-message small{color:var(--teal);font-size:9px;font-weight:800;text-transform:uppercase}
+.client-message p{margin:7px 0 0;font-size:11px;line-height:1.6}
+.application-task-list{display:grid;margin-top:15px}
+.application-task{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.application-task>i{width:28px;height:28px;display:grid;place-items:center;border-radius:9px;background:var(--teal-soft);color:var(--teal);font-size:10px;font-style:normal;font-weight:800}
+.application-task.overdue>i{background:#ffebe8;color:#b95348}
+.application-task.done{opacity:.65}
+.application-task>div{min-width:0;display:grid}
+.application-task>div strong{font-size:11px}
+.application-task>div span,.application-task>div small{margin-top:3px;color:var(--muted);font-size:9px}
+.task-toggle{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--teal);font-size:9px;font-weight:800;cursor:pointer}
+.workspace-empty{margin:16px 0;color:var(--muted);font-size:10px}
+.workspace-form{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.workspace-form label{display:grid;gap:6px}
+.workspace-form label>span{color:var(--muted);font-size:10px;font-weight:800}
+.workspace-form input,.workspace-form select,.workspace-form textarea,.activity-form textarea{width:100%;border:1px solid var(--line);border-radius:9px;outline:0;background:#fafbfb;font-size:12px}
+.workspace-form input,.workspace-form select{height:44px;padding:0 12px}
+.workspace-form textarea,.activity-form textarea{padding:11px;resize:vertical}
+.workspace-form input:focus,.workspace-form select:focus,.workspace-form textarea:focus,.activity-form textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(12,142,142,.09)}
+.workspace-form>button{justify-self:start}
+.activity-form{display:grid;grid-template-columns:1fr auto;align-items:end;gap:9px;margin-top:15px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.activity-timeline{display:grid;margin-top:4px}
+.activity-timeline>div{display:grid;grid-template-columns:12px 1fr;gap:11px;padding:14px 0;border-bottom:1px solid var(--line)}
+.activity-timeline i{width:10px;height:10px;margin-top:4px;border:2px solid white;border-radius:50%;background:var(--teal);box-shadow:0 0 0 1px var(--teal)}
+.activity-timeline i.status{background:var(--purple);box-shadow:0 0 0 1px var(--purple)}
+.activity-timeline i.task{background:#47769c;box-shadow:0 0 0 1px #47769c}
+.activity-timeline>div>div{min-width:0}
+.activity-timeline strong{font-size:10px}
+.activity-timeline p{margin:4px 0;color:var(--ink);font-size:10px;line-height:1.5}
+.activity-timeline small{color:var(--muted);font-size:8px}
+
+@media(max-width:1050px){
+  .application-workspace{grid-template-columns:1fr}
+  .task-row{grid-template-columns:40px minmax(0,1fr) auto}
+  .task-meta{grid-column:2}
+}
+
+@media(max-width:650px){
+  .notification-shortcut{width:38px;height:38px}
+  .application-call,.application-whatsapp{width:38px;padding:0;font-size:0}
+  .application-call:before{content:"☎";font-size:15px}
+  .application-whatsapp:before{content:"WA";font-size:9px}
+  .task-filters>span{display:none}
+  .task-row{grid-template-columns:32px minmax(0,1fr);gap:10px;padding:14px}
+  .task-check{width:30px;height:30px}
+  .task-copy>div{align-items:flex-start;flex-direction:column;gap:5px}
+  .task-meta{grid-column:2}
+  .task-row>form{grid-column:2;justify-self:start}
+  .notification-row{grid-template-columns:10px minmax(0,1fr);padding:15px}
+  .notification-row>form{grid-column:2;justify-self:start}
+  .application-workspace{gap:10px;margin-top:10px}
+  .workspace-form{grid-template-columns:1fr}
+  .workspace-form .span-2{grid-column:auto}
+  .application-task{grid-template-columns:28px minmax(0,1fr)}
+  .application-task>form{grid-column:2;justify-self:start}
+  .activity-form{grid-template-columns:1fr}
+  .activity-form button{justify-self:start}
+}
+
+@media(max-width:360px){
+  .read-all-button{width:38px;padding:0;font-size:0}
+  .read-all-button:before{content:"✓";font-size:13px}
+}

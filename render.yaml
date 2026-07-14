@@ -28,6 +28,12 @@ services:
         value: production
       - key: SITE_URL
         value: https://icstroy.kz
+      - key: APP_TIMEZONE
+        value: Asia/Almaty
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
       - key: ADMIN_EMAIL
         value: admin@icstroy.kz
       - key: ADMIN_PASSWORD

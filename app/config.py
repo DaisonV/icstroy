@@ -31,4 +31,6 @@ class Config:
     REMEMBER_COOKIE_SECURE = os.getenv("FLASK_ENV") == "production"
     WTF_CSRF_TIME_LIMIT = 3600
     SITE_URL = os.getenv("SITE_URL", "http://127.0.0.1:5000").rstrip("/")
-
+    APP_TIMEZONE = os.getenv("APP_TIMEZONE", "Asia/Almaty")
+    TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+    TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")

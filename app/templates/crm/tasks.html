@@ -1,0 +1,38 @@
+{% extends "crm/base.html" %}
+{% block title %}Задачи{% endblock %}
+{% block page_title %}Задачи{% endblock %}
+{% block top_action %}<a class="admin-primary" href="{{ url_for('crm.applications') }}">＋ Выбрать заявку</a>{% endblock %}
+{% block content %}
+<div class="page-intro">
+  <div><h2>Контроль задач</h2><p>Следующие действия менеджеров и просроченные контакты</p></div>
+</div>
+<nav class="subnav task-filters" aria-label="Фильтры задач">
+  <a class="{{ 'active' if selected_status == 'open' }}" href="{{ url_for('crm.tasks', status='open', scope=scope) }}">Открытые</a>
+  <a class="{{ 'active' if selected_status == 'done' }}" href="{{ url_for('crm.tasks', status='done', scope=scope) }}">Выполненные</a>
+  <a class="{{ 'active' if selected_status == 'all' }}" href="{{ url_for('crm.tasks', status='all', scope=scope) }}">Все</a>
+  <span></span>
+  <a class="{{ 'active' if scope == 'mine' }}" href="{{ url_for('crm.tasks', status=selected_status, scope='mine') }}">Мои</a>
+  {% if current_user.role == Role.ADMIN %}<a class="{{ 'active' if scope == 'all' }}" href="{{ url_for('crm.tasks', status=selected_status, scope='all') }}">Команда</a>{% endif %}
+</nav>
+<section class="task-list">
+  {% for task in tasks %}
+  <article class="task-row {{ 'overdue' if task.is_overdue }} {{ task.status.value }}">
+    <span class="task-check">{{ '✓' if task.status == TaskStatus.DONE else '!' if task.is_overdue else '○' }}</span>
+    <div class="task-copy">
+      <div><a href="{{ url_for('crm.application_detail', application_id=task.application_id) }}#tasks"><strong>{{ task.title }}</strong></a><span class="status-pill {{ 'delayed' if task.is_overdue else task.status.value }}">{{ 'Просрочена' if task.is_overdue else task_labels[task.status] }}</span></div>
+      <p>{{ task.application.number }} · {{ task.application.company_name or task.application.contact_name }}</p>
+      {% if task.notes %}<small>{{ task.notes }}</small>{% endif %}
+    </div>
+    <div class="task-meta"><small>Срок</small><strong>{{ local_datetime(task.due_at).strftime('%d.%m.%Y · %H:%M') }}</strong><span>{{ task.assignee.full_name if task.assignee else 'Без ответственного' }}</span></div>
+    <form method="post" action="{{ url_for('crm.task_status', task_id=task.id) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="next" value="{{ request.full_path }}">
+      <input type="hidden" name="status" value="{{ 'open' if task.status == TaskStatus.DONE else 'done' }}">
+      <button class="admin-secondary">{{ 'Вернуть' if task.status == TaskStatus.DONE else 'Выполнено' }}</button>
+    </form>
+  </article>
+  {% else %}
+  <div class="empty-card">По выбранному фильтру задач нет</div>
+  {% endfor %}
+</section>
+{% endblock %}
