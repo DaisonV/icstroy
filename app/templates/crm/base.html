@@ -37,6 +37,6 @@
       {% block content %}{% endblock %}
     </div>
   </main>
-  <script>const s=document.querySelector('#adminSidebar'),o=document.querySelector('#adminOverlay'),m=document.querySelector('#adminMenu');function menu(v){s.classList.toggle('open',v);o.classList.toggle('open',v)}m?.addEventListener('click',()=>menu(true));o?.addEventListener('click',()=>menu(false));document.querySelectorAll('a[href="#new"]').forEach(a=>a.addEventListener('click',()=>{const d=document.querySelector('#new');if(d)d.open=true}));</script>
+  <script>const s=document.querySelector('#adminSidebar'),o=document.querySelector('#adminOverlay'),m=document.querySelector('#adminMenu');function menu(v){s.classList.toggle('open',v);o.classList.toggle('open',v)}m?.addEventListener('click',()=>menu(true));o?.addEventListener('click',()=>menu(false));document.querySelectorAll('a[href="#new"]').forEach(a=>a.addEventListener('click',()=>{const d=document.querySelector('#new');if(d)d.open=true}));document.querySelectorAll('.drawer-close').forEach(button=>button.addEventListener('click',()=>{const drawer=button.closest('.admin-drawer');if(drawer)drawer.open=false}));</script>
   {% block scripts %}{% endblock %}
 </body></html>
